@@ -49,3 +49,6 @@ class PermissionStorage(object):
                     label, self.__class__.__name__))
 
         return permission
+
+
+default_storage = PermissionStorage()
