@@ -1,17 +1,41 @@
 from django.contrib.auth.models import AnonymousUser
 from django.test import TestCase
 
+from django_logical_perms.permissions import P
+
 from tests.permissions import SimplePermission, ChangingPermission
 
 
 class PermissionsTestCase(TestCase):
+    def test_not_implemented_permission(self):
+        p_instance = P()
+        user = AnonymousUser()
+
+        evaluators = (
+            p_instance.has_permission,
+            p_instance.test,
+            p_instance,
+        )
+
+        # P must be subclassed. If not, it should raise NotImplementedError.
+        for fn in evaluators:
+            with self.assertRaises(NotImplementedError):
+                fn(user)
+
     def test_permission(self):
         simple_perm = SimplePermission()
         user = AnonymousUser()
 
+        evaluators = (
+            simple_perm.has_permission,
+            simple_perm.test,
+            simple_perm,
+        )
+
         # Simply calling a P instance should evaluate the permission
-        self.assertTrue(simple_perm(user))
-        self.assertTrue(simple_perm(user, obj=simple_perm))
+        for fn in evaluators:
+            self.assertTrue(fn(user), '%s should evaluate to True' % fn.__name__)
+            self.assertFalse(fn(user, obj=simple_perm), '%s should evaluate to False' % fn.__name__)
 
     def test_permission_cache(self):
         random_perm = ChangingPermission()
