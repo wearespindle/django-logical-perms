@@ -18,22 +18,21 @@ class P(object):
             )
 
     def has_permission(self, user, obj=None):
-        """bool: Tests the permission against a User and an optional object.
+        """Test the permission against a User and an optional object.
 
         You should override this method to implement custom permission evaluation.
+        This method should not do caching as that's already handled in the ``test``
+        method below.
 
-        Note:
-            This method should not do caching as that's already handled in the
-            ``test`` method below.
-
-        Args:
-            user (User): A Django user to test the permission against.
-            obj (object, optional): An optional object to do object-level permissions.
+        :param user: A Django User object to test the permission against.
+        :param obj: An optional object to do object-level permissions.
+        :returns: bool -- Whether or not the user has permission (optionally on the specified object).
+        :raises: NotImplementedError
         """
         raise NotImplementedError()
 
     def test(self, user, obj=None):
-        """bool: Tests and caches the permission against a User and an optional object.
+        """Test and caches the permission against a User and an optional object.
 
         Note:
             This method will try getting the result from cache first. If there
@@ -45,9 +44,9 @@ class P(object):
             own caching algorithm. You should override the ``has_permission``
             method to implement the permission.
 
-        Args:
-            user (User): A Django user to test the permission against.
-            obj (object, optional): An optional object to do object-level permissions.
+        :param user: A Django user to test the permission against.
+        :param obj: An optional object to do object-level permissions.
+        :returns: bool -- Whether or not the user has permission (optionally on the specified object).
         """
         # Build a cache if it's not yet set
         if not hasattr(user, '_dlp_cache'):
@@ -63,12 +62,18 @@ class P(object):
 
         return result
 
-    def __call__(self, *args, **kwargs):
-        """bool: Tests the permissions against a User and an optional object (see test above)."""
-        return self.test(*args, **kwargs)
+    def __call__(self, user, obj=None):
+        """Test the permissions against a User and an optional object (see test above).
+
+        :returns: bool -- Whether or not the user has permission (optionally on the specified object).
+        """
+        return self.test(user, obj=None)
 
     def __repr__(self):
-        """str: Returns textual representation of the permission object."""
+        """Get textual representation of the permission object.
+
+        :returns: str -- Textual representation of the permission object.
+        """
         return 'P(%s)' % self.label
 
 
@@ -76,12 +81,9 @@ class FunctionalP(P):
     """A wrapper class for small function-based logical permissions."""
 
     def __init__(self, check_func):
-        """Initializes a new logical permission that will use the passed in
-        ``check_func`` to evaluate the permission.
+        """Initialize a new logical permission that will use the passed in ``check_func`` to evaluate the permission.
 
-        Args:
-            check_func (function): The permission evaluator.
+        :param check_func: The permission evaluator.
         """
-
         self.has_permission = check_func
         super(FunctionalP, self).__init__()
