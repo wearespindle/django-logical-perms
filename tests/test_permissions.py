@@ -1,7 +1,7 @@
 from django.contrib.auth.models import AnonymousUser
 from django.test import TestCase
 
-from django_logical_perms.permissions import P
+from django_logical_perms.permissions import P, FunctionalP
 
 from tests.permissions import SimplePermission, ChangingPermission, StaticLabelPermission
 
@@ -80,3 +80,20 @@ class PermissionsTestCase(TestCase):
         self.assertEqual(repr(simple_perm), 'P(tests.SimplePermission)')
         self.assertEqual(repr(random_perm), 'P(tests.ChangingPermission)')
         self.assertEqual(repr(static_label_perm), 'P(tests.static_permission)')
+
+    def test_method_based_permission(self):
+        # We should be able to create permissions using lambdas through FunctionalP.
+        user = AnonymousUser()
+        lambda_perm = FunctionalP(lambda user_, obj=None: True)
+
+        self.assertTrue(lambda_perm(user))
+        self.assertEqual(lambda_perm.label, 'tests.<lambda>')
+
+        # We should also be able to create permissions with named methods through FunctionalP.
+        def can_have_tests_passed(user, obj=None):
+            return True
+
+        named_perm = FunctionalP(can_have_tests_passed)
+
+        self.assertTrue(named_perm(user))
+        self.assertEqual(named_perm.label, 'tests.can_have_tests_passed')
