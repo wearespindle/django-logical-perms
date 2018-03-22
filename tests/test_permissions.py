@@ -1,9 +1,12 @@
 from django.contrib.auth.models import AnonymousUser
 from django.test import TestCase
 
-from django_logical_perms.permissions import P, FunctionalP
+from django_logical_perms.decorators import permission
+from django_logical_perms.permissions import P, FunctionalP, BaseP
+from django_logical_perms.storages import default_storage, PermissionStorage
 
-from tests.permissions import SimplePermission, ChangingPermission, StaticLabelPermission
+from tests.permissions import SimplePermission, ChangingPermission, StaticLabelPermission, simple_decorated_permission, \
+    simple_labeled_permission, registered_permission
 
 
 class PermissionsTestCase(TestCase):
@@ -97,3 +100,63 @@ class PermissionsTestCase(TestCase):
 
         self.assertTrue(named_perm(user))
         self.assertEqual(named_perm.label, 'tests.can_have_tests_passed')
+
+    def test_storage(self):
+        storage = PermissionStorage()
+
+        # There should be nothing in the storage now.
+        self.assertEqual(storage.get_all_permissions(), {})
+
+        # We should only be allowed to register BaseP instances with the storage backend.
+        with self.assertRaises(ValueError):
+            storage.register(object())
+
+        # The BaseP instance must have a label in order for it to be registered with the storage backend.
+        with self.assertRaises(ValueError):
+            storage.register(BaseP())
+
+        # There should not be a 'demo' permission in the storage now.
+        with self.assertRaises(ValueError):
+            storage.get_permission('demo')
+
+        # This registration should go as planned.
+        permission = FunctionalP(lambda user, obj=None: True, label='demo')
+        storage.register(permission)
+
+        self.assertEqual(storage.get_all_permissions(), {'demo': permission})
+        self.assertEqual(storage.get_permission('demo'), permission)
+
+        # Should not be able to re-register this permission now.
+        with self.assertRaises(ValueError):
+            storage.register(permission)
+
+    def test_decorated_permission(self):
+        user = AnonymousUser()
+
+        # The permission decorator simply turns a function into a FunctionalP instance.
+        self.assertIsInstance(simple_decorated_permission, FunctionalP)
+        self.assertTrue(simple_decorated_permission(user))
+
+        # The label should also be set
+        self.assertEqual(simple_decorated_permission.label, 'tests.simple_decorated_permission')
+        self.assertEqual(repr(simple_decorated_permission), 'P(tests.simple_decorated_permission)')
+
+        # Permissions can also pass in keyword arguments to the decorator.
+        self.assertIsInstance(simple_labeled_permission, FunctionalP)
+        self.assertTrue(simple_labeled_permission(user))
+
+        # Check for the custom label
+        self.assertEqual(simple_labeled_permission.label, 'tests.simple_labeled_permission_custom')
+        self.assertEqual(repr(simple_labeled_permission), 'P(tests.simple_labeled_permission_custom)')
+
+        # We can also register the permission directly with the default storage
+        # by way of the decorator.
+        self.assertEqual(registered_permission.label, 'tests.registered_permission')
+        self.assertEqual(repr(registered_permission), 'P(tests.registered_permission)')
+        self.assertEqual(default_storage.get_permission('tests.registered_permission'), registered_permission)
+        self.assertTrue(registered_permission(user))
+        self.assertTrue(default_storage.get_permission('tests.registered_permission')(user))
+
+        # We should not be able to decorate a non-callable
+        with self.assertRaises(ValueError):
+            permission('blep')
