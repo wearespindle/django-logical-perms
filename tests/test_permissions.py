@@ -1,9 +1,11 @@
-from django.contrib.auth.models import AnonymousUser
+import uuid
+
+from django.contrib.auth.models import AnonymousUser, User, Permission
 from django.test import TestCase
 
 from django_logical_perms.backends import LogicalPermissionsBackend
 from django_logical_perms.decorators import permission
-from django_logical_perms.permissions import P, FunctionalP, BaseP, ProcessedP
+from django_logical_perms.permissions import P, FunctionalP, BaseP, ProcessedP, has_perm
 from django_logical_perms.storages import default_storage, PermissionStorage
 
 from tests.permissions import SimplePermission, ChangingPermission, StaticLabelPermission, simple_decorated_permission, \
@@ -261,3 +263,24 @@ class PermissionsTestCase(TestCase):
         self.assertTrue(perm_yes(user))
         self.assertTrue(perm_no(user))
         self.assertTrue(perm(user))
+
+    def test_builtin_permissions(self):
+        # We will need an actual user for this. We'll use uuid as username as it's random enough.
+        user = User.objects.create(username=uuid.uuid4())
+        target_perm = Permission.objects.all().last()
+        codename = '%s.%s' % (target_perm.content_type.app_label, target_perm.codename)
+
+        # Create new instance of the `has_perm` permission
+        user_has_random_permission = has_perm(codename)
+
+        self.assertFalse(user.has_perm(codename))
+        self.assertFalse(user_has_random_permission(user))
+
+        # Now add the permission to the user
+        user.user_permissions.add(target_perm)
+
+        # Re-fetch the user to invalidate cache
+        user = User.objects.get(id=user.id)
+
+        self.assertTrue(user.has_perm(codename))
+        self.assertTrue(user_has_random_permission(user))
