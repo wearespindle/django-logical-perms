@@ -3,6 +3,19 @@ from django.conf import settings
 
 class P(object):
     """The very base implementation of a logical permission."""
+    label = None
+    """str: Permission label. Used to register the permission and in its representation."""
+
+    def __init__(self):
+        # Set up a label if it's not statically assigned
+        if self.label is None:
+            label_format = getattr(settings, 'PERMISSION_DEFAULT_LABEL_FORMAT', '{app_name}.{permission_name}')
+
+            self.label = label_format.format(
+                app_name='.'.join(self.__class__.__module__.split('.')[:-1]),
+                permission_name=self.__class__.__name__
+            )
+
     def has_permission(self, user, obj=None):
         """bool: Tests the permission against a User and an optional object.
 
@@ -55,12 +68,5 @@ class P(object):
 
     def __repr__(self):
         """str: Returns textual representation of the permission object."""
-        label_format = getattr(settings, 'PERMISSION_DEFAULT_LABEL_FORMAT', '{app_name}.{permission_name}')
-
-        label = label_format.format(
-            app_name='.'.join(self.__class__.__module__.split('.')[:-1]),
-            permission_name=self.__class__.__name__
-        )
-
-        return "P({label})".format(label=label)
+        return 'P(%s)' % self.label
 
