@@ -1,5 +1,3 @@
-from django.conf import settings
-
 from django_logical_perms.utils import get_permission_label
 
 
