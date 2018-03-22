@@ -15,15 +15,15 @@ def permission(func=None, label=None, register=None):
                      default settings will be used.
     """
 
-    def actual_decorator(func):
+    def actual_decorator(func_):
         # The thing that we're decorating should at least be a callable.
-        if not callable(func):
+        if not callable(func_):
             raise ValueError(
                 'The permission decorator can only be used on callables. Did you set '
                 'a label without explicitly specifying the `label` keyword argument?')
 
         # Create the actual permission object
-        p = FunctionalP(check_func=func, label=label)
+        p = FunctionalP(check_func=func_, label=label)
 
         # Register with the default storage if specified
         if register is True:
