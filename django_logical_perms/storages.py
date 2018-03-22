@@ -1,4 +1,4 @@
-from django_logical_perms.permissions import P
+from django_logical_perms.permissions import BaseP
 
 
 class PermissionStorage(object):
@@ -15,13 +15,13 @@ class PermissionStorage(object):
     def register(self, permission):
         """Register a permission with the storage instance.
 
-        :param permission: P -- The permission to register. Must be an instance of P.
+        :param permission: P -- The permission to register. Must be an instance of BaseP.
         :raises: ValueError
         """
-        if not isinstance(permission, P):
+        if not isinstance(permission, BaseP):
             raise ValueError(
                 'Registering permissions with the PermissionStorage backend is only '
-                'allowed for instances of P.')
+                'allowed for instances of BaseP.')
 
         if permission.label is None:
             raise ValueError('The permission must have a label.')
