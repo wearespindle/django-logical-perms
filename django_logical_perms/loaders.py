@@ -11,8 +11,12 @@ def load_all_permissions_modules():
     with the storage backend. This will automatically enable evaluation through Django's
     has_perms function (if the custom auth backend is loaded).
     """
+    from django_logical_perms.apps import DjangoLogicalPermsConfig
 
     for _, app_config in apps.app_configs.items():
+        if isinstance(app_config, DjangoLogicalPermsConfig):
+            continue
+
         load_permissions_module(app_config)
 
 
