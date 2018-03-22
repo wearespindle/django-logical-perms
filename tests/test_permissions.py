@@ -3,7 +3,7 @@ from django.test import TestCase
 
 from django_logical_perms.backends import LogicalPermissionsBackend
 from django_logical_perms.decorators import permission
-from django_logical_perms.permissions import P, FunctionalP, BaseP
+from django_logical_perms.permissions import P, FunctionalP, BaseP, ProcessedP
 from django_logical_perms.storages import default_storage, PermissionStorage
 
 from tests.permissions import SimplePermission, ChangingPermission, StaticLabelPermission, simple_decorated_permission, \
@@ -202,3 +202,62 @@ class PermissionsTestCase(TestCase):
 
         # The authenticate method should just return None -- we don't authenticate users
         self.assertIsNone(LogicalPermissionsBackend().authenticate())
+
+    def test_processed_permissions(self):
+        user = AnonymousUser()
+        yes = True
+        no = False
+
+        @permission
+        def perm_yes(user, obj=None):
+            return yes
+
+        @permission
+        def perm_no(user, obj=None):
+            return no
+
+        # Invert
+        self.assertFalse((~perm_yes)(user))
+        self.assertIsNone((~perm_yes).label)
+        self.assertEqual(repr(~perm_no), 'Not<P(tests.perm_no)>')
+
+        # Or
+        self.assertTrue((perm_yes | perm_no)(user))
+        self.assertIsNone((perm_yes | perm_no).label)
+        self.assertEqual(repr(perm_yes | perm_no), 'Or<P(tests.perm_yes), P(tests.perm_no)>')
+
+        # And
+        self.assertFalse((perm_yes & perm_no)(user))
+        self.assertIsNone((perm_yes & perm_no).label)
+        self.assertEqual(repr(perm_yes & perm_no), 'And<P(tests.perm_yes), P(tests.perm_no)>')
+
+        # Xor
+        self.assertTrue((perm_yes ^ perm_no)(user))
+        self.assertFalse((perm_yes ^ perm_yes)(user))
+        self.assertTrue((perm_no ^ perm_yes)(user))
+
+        self.assertIsNone((perm_yes ^ perm_no).label)
+        self.assertEqual(repr(perm_yes ^ perm_no), 'Xor<P(tests.perm_yes), P(tests.perm_no)>')
+
+        # Individual permissions get cached. If we change their output, the chained permissions
+        # should still evaluate to the same result through cache.
+        perm = perm_yes & perm_no
+
+        # No changes
+        self.assertTrue(perm_yes(user))
+        self.assertFalse(perm_no(user))
+        self.assertFalse(perm(user))
+
+        # Now change the permission output
+        no = True
+
+        self.assertTrue(perm_yes(user))
+        self.assertFalse(perm_no(user))
+        self.assertFalse(perm(user))
+
+        # Re-fetch the user. This should clear the cache.
+        user = AnonymousUser()
+
+        self.assertTrue(perm_yes(user))
+        self.assertTrue(perm_no(user))
+        self.assertTrue(perm(user))

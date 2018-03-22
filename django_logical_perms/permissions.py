@@ -66,6 +66,26 @@ class BaseP(object):
         """
         return 'P(%s)' % self.label
 
+    def __or__(self, other):
+        return ProcessedP(
+            check_func=lambda user, obj=None: self(user, obj) or other(user, obj),
+            repr='Or<{}, {}>'.format(self, other))
+
+    def __and__(self, other):
+        return ProcessedP(
+            check_func=lambda user, obj=None: self(user, obj) and other(user, obj),
+            repr='And<{}, {}>'.format(self, other))
+
+    def __xor__(self, other):
+        return ProcessedP(
+            check_func=lambda user, obj=None: self(user, obj) ^ other(user, obj),
+            repr='Xor<{}, {}>'.format(self, other))
+
+    def __invert__(self):
+        return ProcessedP(
+            check_func=lambda user, obj=None: not self(user, obj),
+            repr='Not<{}>'.format(self))
+
 
 class P(BaseP):
     """A base class for class-based permissions."""
@@ -90,3 +110,12 @@ class FunctionalP(BaseP):
 
         self.has_permission = check_func
         self.label = label
+
+
+class ProcessedP(BaseP):
+    def __init__(self, check_func, repr):
+        self.has_permission = check_func
+        self._repr = repr
+
+    def __repr__(self):
+        return self._repr
