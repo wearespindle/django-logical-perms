@@ -3,6 +3,7 @@ from django.conf import settings
 
 class P(object):
     """The very base implementation of a logical permission."""
+
     label = None
     """str: Permission label. Used to register the permission and in its representation."""
 
@@ -70,3 +71,17 @@ class P(object):
         """str: Returns textual representation of the permission object."""
         return 'P(%s)' % self.label
 
+
+class FunctionalP(P):
+    """A wrapper class for small function-based logical permissions."""
+
+    def __init__(self, check_func):
+        """Initializes a new logical permission that will use the passed in
+        ``check_func`` to evaluate the permission.
+
+        Args:
+            check_func (function): The permission evaluator.
+        """
+
+        self.has_permission = check_func
+        super(FunctionalP, self).__init__()
