@@ -13,7 +13,4 @@ class ChangingPermission(P):
         self.results[obj] = result
 
     def has_permission(self, user, obj=None):
-        if obj is None:
-            return False
-
         return self.results[obj]

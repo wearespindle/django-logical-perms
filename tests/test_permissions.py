@@ -34,8 +34,8 @@ class PermissionsTestCase(TestCase):
 
         # Simply calling a P instance should evaluate the permission
         for fn in evaluators:
-            self.assertTrue(fn(user), '%s should evaluate to True' % fn.__name__)
-            self.assertFalse(fn(user, obj=simple_perm), '%s should evaluate to False' % fn.__name__)
+            self.assertTrue(fn(user))
+            self.assertTrue(fn(user, obj=simple_perm))
 
     def test_permission_cache(self):
         random_perm = ChangingPermission()
