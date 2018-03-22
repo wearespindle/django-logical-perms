@@ -1,6 +1,7 @@
 from django.contrib.auth.models import AnonymousUser
 from django.test import TestCase
 
+from django_logical_perms.backends import LogicalPermissionsBackend
 from django_logical_perms.decorators import permission
 from django_logical_perms.permissions import P, FunctionalP, BaseP
 from django_logical_perms.storages import default_storage, PermissionStorage
@@ -198,3 +199,6 @@ class PermissionsTestCase(TestCase):
 
         # Should work with the permission registration from the app's permissions.py
         self.assertTrue(user.has_perm('tests.registered_permission'))
+
+        # The authenticate method should just return None -- we don't authenticate users
+        self.assertIsNone(LogicalPermissionsBackend().authenticate())
