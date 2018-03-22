@@ -13,10 +13,11 @@ class PermissionStorage(object):
         """
         return self._permissions
 
-    def register(self, permission):
+    def register(self, permission, label=None):
         """Register a permission with the storage instance.
 
         :param permission: P -- The permission to register. Must be an instance of BaseP.
+        :param label: str -- Optional custom label for the permission.
         :raises: ValueError
         """
         if not isinstance(permission, BaseP):
@@ -24,16 +25,19 @@ class PermissionStorage(object):
                 'Registering permissions with the PermissionStorage backend is only '
                 'allowed for instances of BaseP.')
 
-        if permission.label is None:
+        if label is None:
+            label = permission.label
+
+        if label is None:
             raise ValueError('The permission must have a label.')
 
-        if permission.label in self.get_all_permissions():
+        if label in self.get_all_permissions():
             raise ValueError(
-                'The permission {} cannot be registered with the {} storage backend '
+                'The permission {} ({}) cannot be registered with the {} storage backend '
                 'because another permission with the same name already exists.'.format(
-                    permission, self.__class__.__name__))
+                    label, permission, self.__class__.__name__))
 
-        self._permissions[permission.label] = permission
+        self._permissions[label] = permission
 
     def get_permission(self, label):
         """Returns the permission from the storage or raises a ValueError if it was not found.
