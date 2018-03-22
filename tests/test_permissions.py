@@ -3,7 +3,7 @@ from django.test import TestCase
 
 from django_logical_perms.permissions import P
 
-from tests.permissions import SimplePermission, ChangingPermission
+from tests.permissions import SimplePermission, ChangingPermission, StaticLabelPermission
 
 
 class PermissionsTestCase(TestCase):
@@ -66,10 +66,17 @@ class PermissionsTestCase(TestCase):
         self.assertFalse(random_perm(user, obj='a'))
         self.assertTrue(random_perm(user, obj='b'))
 
-    def test_permission_repr(self):
+    def test_permission_label(self):
         simple_perm = SimplePermission()
         random_perm = ChangingPermission()
+        static_label_perm = StaticLabelPermission()
 
-        # Default representation format is '{app_name}.{permission_name}'
-        self.assertEqual(repr(simple_perm), "P(tests.SimplePermission)")
-        self.assertEqual(repr(random_perm), "P(tests.ChangingPermission)")
+        # Default label format is '{app_name}.{permission_name}'
+        self.assertEqual(simple_perm.label, 'tests.SimplePermission')
+        self.assertEqual(random_perm.label, 'tests.ChangingPermission')
+        self.assertEqual(static_label_perm.label, 'tests.static_permission')
+
+        # The labels should be in the representations also
+        self.assertEqual(repr(simple_perm), 'P(tests.SimplePermission)')
+        self.assertEqual(repr(random_perm), 'P(tests.ChangingPermission)')
+        self.assertEqual(repr(static_label_perm), 'P(tests.static_permission)')

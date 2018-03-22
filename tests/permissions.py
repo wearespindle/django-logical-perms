@@ -14,3 +14,7 @@ class ChangingPermission(P):
 
     def has_permission(self, user, obj=None):
         return self.results[obj]
+
+
+class StaticLabelPermission(SimplePermission):
+    label = 'tests.static_permission'
