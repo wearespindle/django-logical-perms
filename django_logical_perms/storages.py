@@ -3,7 +3,8 @@ from django_logical_perms.permissions import BaseP
 
 class PermissionStorage(object):
     """The default storage class for logical permissions."""
-    _permissions = {}
+    def __init__(self):
+        self._permissions = {}
 
     def get_all_permissions(self):
         """Return a list of all currently registered permissions.
