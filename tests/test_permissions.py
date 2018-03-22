@@ -170,3 +170,31 @@ class PermissionsTestCase(TestCase):
         # We should not be able to decorate a non-callable
         with self.assertRaises(ValueError):
             permission('blep')
+
+    def test_django_integration(self):
+        user = AnonymousUser()
+
+        # Should work with class-based permissions
+        class ClassPermission(P):
+            def has_permission(self, user, obj=None):
+                return True
+
+        default_storage.register(ClassPermission())
+
+        self.assertTrue(user.has_perm('tests.ClassPermission'))
+        self.assertFalse(user.has_perm('tests.blep'))
+
+        # Should work with decorated permissions
+        @permission(register=True)
+        def inline_decorated(user, obj=None):
+            return True
+
+        self.assertTrue(user.has_perm('tests.inline_decorated'))
+        self.assertFalse(user.has_perm('tests.blep'))
+
+        # Should work with custom labeled permissions
+        default_storage.register(ClassPermission(), label='tests.blep')
+        self.assertTrue(user.has_perm('tests.blep'))
+
+        # Should work with the permission registration from the app's permissions.py
+        self.assertTrue(user.has_perm('tests.registered_permission'))
