@@ -1,6 +1,7 @@
 from django.conf import settings
 
 from django_logical_perms.permissions import FunctionalP
+from django_logical_perms.storages import default_storage
 
 
 def permission(func=None, label=None, register=None):
@@ -26,8 +27,7 @@ def permission(func=None, label=None, register=None):
 
         # Register with the default storage if specified
         if register is True:
-            # FIXME: default_storage.register(p)
-            pass
+            default_storage.register(p)
 
         return p
 
