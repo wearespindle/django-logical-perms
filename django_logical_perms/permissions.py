@@ -119,3 +119,15 @@ class ProcessedP(BaseP):
 
     def __repr__(self):
         return self._desc
+
+
+class UserHasPermPermission(BaseP):
+    def __init__(self, perm):
+        self.label = 'has_permission: {}'.format(perm)
+        self.perm = perm
+
+    def has_permission(self, user, obj=None):
+        return user.has_perm(self.perm, obj)
+
+
+has_perm = UserHasPermPermission
