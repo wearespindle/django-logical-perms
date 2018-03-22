@@ -1,21 +1,13 @@
 from django.conf import settings
 
+from django_logical_perms.utils import get_permission_label
 
-class P(object):
+
+class BaseP(object):
     """The very base implementation of a logical permission."""
 
     label = None
     """str: Permission label. Used to register the permission and in its representation."""
-
-    def __init__(self):
-        # Set up a label if it's not statically assigned
-        if self.label is None:
-            label_format = getattr(settings, 'PERMISSION_DEFAULT_LABEL_FORMAT', '{app_name}.{permission_name}')
-
-            self.label = label_format.format(
-                app_name='.'.join(self.__class__.__module__.split('.')[:-1]),
-                permission_name=self.__class__.__name__
-            )
 
     def has_permission(self, user, obj=None):
         """Test the permission against a User and an optional object.
@@ -67,7 +59,7 @@ class P(object):
 
         :returns: bool -- Whether or not the user has permission (optionally on the specified object).
         """
-        return self.test(user, obj=None)
+        return self.test(user, obj)
 
     def __repr__(self):
         """Get textual representation of the permission object.
@@ -77,7 +69,16 @@ class P(object):
         return 'P(%s)' % self.label
 
 
-class FunctionalP(P):
+class P(BaseP):
+    """A base class for class-based permissions."""
+
+    def __init__(self):
+        # Set up a label if it's not statically assigned
+        if self.label is None:
+            self.label = get_permission_label(self.__class__)
+
+
+class FunctionalP(BaseP):
     """A wrapper class for small function-based logical permissions."""
 
     def __init__(self, check_func, label=None):
@@ -86,7 +87,8 @@ class FunctionalP(P):
         :param check_func: The permission evaluator.
         :param label: Custom label for the permission.
         """
+        if self.label is None:
+            label = get_permission_label(check_func)
+
         self.has_permission = check_func
         self.label = label
-
-        super(FunctionalP, self).__init__()
