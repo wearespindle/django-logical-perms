@@ -29,9 +29,8 @@ def load_permissions_module(app_config):
         # Import and only process apps with a permissions module
         permissions_module_name = getattr(settings, 'PERMISSIONS_MODULE_NAME', 'permissions')
         permissions_module_path = '%s.%s' % (app_config.name, permissions_module_name)
-        permissions_module = import_module(permissions_module_path)
 
-        print("Loaded permissions from %s" % permissions_module.__name__)
+        import_module(permissions_module_path)
 
     except ImportError:
         # Skip the app if the permissions module does not exist.
