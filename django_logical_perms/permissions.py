@@ -113,7 +113,23 @@ class FunctionalP(BaseP):
 
 
 class ProcessedP(BaseP):
+    """A wrapper class for pre-processed permissions.
+
+    This class is especially useful to omit a label and provide your own description of the
+    permission that will show up when calling ``repr()``.
+
+    It's currently only used internally when combining or inverting permissions so that
+    resulting P instances will show up as  ``Not<P(...)>``, ``Or<P(...), P(...)>`` and so on.
+
+    The instance will not have a (auto generated) label, so that they can't be registered with
+    permission storage without explicitly giving a label during registration.
+    """
     def __init__(self, check_func, desc):
+        """Initialise a new instance of ProcessedP.
+
+        :param check_func: The permission evaluator.
+        :param desc: A description (not a label) for the permission. Shown as ``__repr__`` value.
+        """
         self.has_permission = check_func
         self._desc = desc
 
@@ -122,7 +138,35 @@ class ProcessedP(BaseP):
 
 
 class UserHasPermPermission(BaseP):
+    """Built-in logical permission for Django's ``user.has_perm`` feature.
+
+    You can use this class to combine your own logical permissions with Django's static
+    permissions.
+
+    Note:
+         It is very important that you make sure not to evaluate a logical permission that
+         will in turn evaluate itself again through ``user.has_perm``. This is not only
+         important for this built-in permission but also in whatever custom logical
+         permission you plan to integrate.
+
+         By calling a logical permission, which will, through whatever path, evaluate itself
+         again, you risk creating an infinite loop.
+
+    Example:
+
+        >>> @permission
+        ... def user_is_staff(user, obj=None):
+        ...     return user.is_staff
+        ...
+        ... staff_or_awesome = user_is_staff | has_perm('awesome')
+        ...
+        ... staff_or_awesome(user)  # will evaluate `user.is_staff` or `user.has_perm('awesome')`
+    """
     def __init__(self, perm):
+        """Initialise a new instance of UserHasPermPermission.
+
+        :param perm: The permission to pass into ``user.has_perm``
+        """
         self.label = 'has_permission: {}'.format(perm)
         self.perm = perm
 

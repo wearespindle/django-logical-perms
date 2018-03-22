@@ -16,6 +16,11 @@ class PermissionStorage(object):
     def register(self, permission, label=None):
         """Register a permission with the storage instance.
 
+        Note:
+            The ``label`` param will always prioritize over the permission instance
+            label. If you do not explicitly specify a label, the permission's label
+            will be used (``permission.label``).
+
         :param permission: P -- The permission to register. Must be an instance of BaseP.
         :param label: str -- Optional custom label for the permission.
         :raises: ValueError
