@@ -120,15 +120,25 @@ class PermissionsTestCase(TestCase):
             storage.get_permission('demo')
 
         # This registration should go as planned.
-        permission = FunctionalP(lambda user, obj=None: True, label='demo')
-        storage.register(permission)
+        perm = FunctionalP(lambda user, obj=None: True, label='demo')
+        storage.register(perm)
 
-        self.assertEqual(storage.get_all_permissions(), {'demo': permission})
-        self.assertEqual(storage.get_permission('demo'), permission)
+        self.assertEqual(storage.get_all_permissions(), {'demo': perm})
+        self.assertEqual(storage.get_permission('demo'), perm)
 
         # Should not be able to re-register this permission now.
         with self.assertRaises(ValueError):
-            storage.register(permission)
+            storage.register(perm)
+
+        # Ability to register a permission with a custom label
+        storage.register(perm, label='blep')
+
+        self.assertEqual(storage.get_all_permissions(), {'demo': perm, 'blep': perm})
+        self.assertEqual(storage.get_permission('blep'), perm)
+
+        # Should not be able to re-register this permission now.
+        with self.assertRaises(ValueError):
+            storage.register(perm, label='blep')
 
     def test_decorated_permission(self):
         user = AnonymousUser()
