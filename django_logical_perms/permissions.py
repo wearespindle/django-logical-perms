@@ -87,7 +87,7 @@ class FunctionalP(BaseP):
         :param check_func: The permission evaluator.
         :param label: Custom label for the permission.
         """
-        if self.label is None:
+        if self.label is None and label is None:
             label = get_permission_label(check_func)
 
         self.has_permission = check_func
