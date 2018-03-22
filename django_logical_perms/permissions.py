@@ -80,10 +80,13 @@ class P(object):
 class FunctionalP(P):
     """A wrapper class for small function-based logical permissions."""
 
-    def __init__(self, check_func):
+    def __init__(self, check_func, label=None):
         """Initialize a new logical permission that will use the passed in ``check_func`` to evaluate the permission.
 
         :param check_func: The permission evaluator.
+        :param label: Custom label for the permission.
         """
         self.has_permission = check_func
+        self.label = label
+
         super(FunctionalP, self).__init__()
