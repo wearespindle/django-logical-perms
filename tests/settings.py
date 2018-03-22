@@ -119,3 +119,8 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.0/howto/static-files/
 
 STATIC_URL = '/static/'
+
+AUTHENTICATION_BACKENDS = [
+    'django_logical_perms.backends.LogicalPermissionsBackend',
+    'django.contrib.auth.backends.ModelBackend'
+]
