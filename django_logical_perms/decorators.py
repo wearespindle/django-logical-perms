@@ -19,8 +19,9 @@ def permission(func=None, label=None, register=None):
         # The thing that we're decorating should at least be a callable.
         if not callable(func_):
             raise ValueError(
-                'The permission decorator can only be used on callables. Did you set '
-                'a label without explicitly specifying the `label` keyword argument?')
+                'The permission decorator can only be used on callables. '
+                'Did you set a label without explicitly specifying the '
+                '`label` keyword argument?')
 
         # Create the actual permission object
         p = FunctionalP(check_func=func_, label=label)
@@ -33,10 +34,12 @@ def permission(func=None, label=None, register=None):
 
     # Default to global settings if register is None
     if register is None:
-        register = getattr(settings, 'PERMISSION_DEFAULT_REGISTER_WITH_BACKEND', False)
+        setting_name = 'PERMISSION_DEFAULT_REGISTER_WITH_BACKEND'
+        register = getattr(settings, setting_name, False)
 
-    # `func` will only be set if the user used the decorator without passing in keyword arguments. In that
-    # case we should pass in the function to the actual decorator.
+    # `func` will only be set if the user used the decorator without passing
+    # in keyword arguments. In that case we should pass in the function to the
+    # actual decorator.
     if func is not None:
         return actual_decorator(func)
 

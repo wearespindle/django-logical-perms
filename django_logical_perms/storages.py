@@ -17,12 +17,12 @@ class PermissionStorage(object):
         """Register a permission with the storage instance.
 
         Note:
-            The ``label`` param will always prioritize over the permission instance
-            label. If you do not explicitly specify a label, the permission's label
-            will be used (``permission.label``).
+            The ``label`` param will always prioritize over the permission
+            instance label. If you do not explicitly specify a label, the
+            permission's label will be used (``permission.label``).
 
-        :param permission: P -- The permission to register. Must be an instance of BaseP.
-        :param label: str -- Optional custom label for the permission.
+        :param permission: BaseP -- The permission to register.
+        :param label: str, optional -- Custom label for the permission.
         :raises: ValueError
         """
         if not isinstance(permission, BaseP):
@@ -45,7 +45,10 @@ class PermissionStorage(object):
         self._permissions[label] = permission
 
     def get_permission(self, label):
-        """Returns the permission from the storage or raises a ValueError if it was not found.
+        """Returns the permission from the storage.
+
+        This function will always return the permission instance from the
+        storage. If the permission is not found it will raise a ValueError.
 
         :param label: str -- The permission label to get.
         :raises: ValueError

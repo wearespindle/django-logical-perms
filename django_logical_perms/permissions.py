@@ -10,13 +10,13 @@ class BaseP(object):
     def has_permission(self, user, obj=None):
         """Test the permission against a User and an optional object.
 
-        You should override this method to implement custom permission evaluation.
-        This method should not do caching as that's already handled in the ``test``
-        method below.
+        You should override this method to implement custom permission
+        evaluation. This method should not do caching as that's already
+        handled in the ``test`` method below.
 
         :param user: A Django User object to test the permission against.
         :param obj: An optional object to do object-level permissions.
-        :returns: bool -- Whether or not the user has permission (optionally on the specified object).
+        :returns: bool -- Whether or not the user has permission.
         :raises: NotImplementedError
         """
         raise NotImplementedError()
@@ -26,9 +26,9 @@ class BaseP(object):
 
         Note:
             This method will try getting the result from cache first. If there
-            is no cached result available, the permission is evaluated by calling
-            ``self.has_permission``. The output will be saved to cache to speed
-            up any future lookups.
+            is no cached result available, the permission is evaluated by
+            calling ``self.has_permission``. The output will be saved to cache
+            to speed up any future lookups.
 
             You should only override this method if you want to implement your
             own caching algorithm. You should override the ``has_permission``
@@ -36,7 +36,7 @@ class BaseP(object):
 
         :param user: A Django user to test the permission against.
         :param obj: An optional object to do object-level permissions.
-        :returns: bool -- Whether or not the user has permission (optionally on the specified object).
+        :returns: bool -- Whether or not the user has permission.
         """
         # Build a cache if it's not yet set
         if not hasattr(user, '_dlp_cache'):
@@ -53,9 +53,9 @@ class BaseP(object):
         return result
 
     def __call__(self, user, obj=None):
-        """Test the permissions against a User and an optional object (see test above).
+        """Test the permissions against a User and an optional object.
 
-        :returns: bool -- Whether or not the user has permission (optionally on the specified object).
+        :returns: bool -- Whether or not the user has permission.
         """
         return self.test(user, obj)
 
@@ -100,7 +100,7 @@ class FunctionalP(BaseP):
     """A wrapper class for small function-based logical permissions."""
 
     def __init__(self, check_func, label=None):
-        """Initialize a new logical permission that will use the passed in ``check_func`` to evaluate the permission.
+        """A new logical permission using the passed in ``check_func``.
 
         :param check_func: The permission evaluator.
         :param label: Custom label for the permission.
@@ -115,20 +115,22 @@ class FunctionalP(BaseP):
 class ProcessedP(BaseP):
     """A wrapper class for pre-processed permissions.
 
-    This class is especially useful to omit a label and provide your own description of the
-    permission that will show up when calling ``repr()``.
+    This class is especially useful to omit a label and provide your own
+    description of the permission that will show up when calling ``repr()``.
 
-    It's currently only used internally when combining or inverting permissions so that
-    resulting P instances will show up as  ``Not<P(...)>``, ``Or<P(...), P(...)>`` and so on.
+    It's currently only used internally when combining or inverting permissions
+    so that resulting P instances will show up as  ``Not<P(...)>``,
+    ``Or<P(...), P(...)>`` and so on.
 
-    The instance will not have a (auto generated) label, so that they can't be registered with
-    permission storage without explicitly giving a label during registration.
+    The instance will not have a (auto generated) label, so that they can't be
+    registered with permission storage without explicitly giving a label
+    during registration.
     """
     def __init__(self, check_func, desc):
         """Initialise a new instance of ProcessedP.
 
         :param check_func: The permission evaluator.
-        :param desc: A description (not a label) for the permission. Shown as ``__repr__`` value.
+        :param desc: A description (not a label) for the permission.
         """
         self.has_permission = check_func
         self._desc = desc
@@ -140,17 +142,18 @@ class ProcessedP(BaseP):
 class UserHasPermPermission(BaseP):
     """Built-in logical permission for Django's ``user.has_perm`` feature.
 
-    You can use this class to combine your own logical permissions with Django's static
-    permissions.
+    You can use this class to combine your own logical permissions with Django's
+    static permissions.
 
     Note:
-         It is very important that you make sure not to evaluate a logical permission that
-         will in turn evaluate itself again through ``user.has_perm``. This is not only
-         important for this built-in permission but also in whatever custom logical
-         permission you plan to integrate.
+         It is very important that you make sure not to evaluate a logical
+         permission that will in turn evaluate itself again through
+         ``user.has_perm``. This is not only important for this built-in
+         permission but also in whatever custom logical permission you
+         plan to integrate.
 
-         By calling a logical permission, which will, through whatever path, evaluate itself
-         again, you risk creating an infinite loop.
+         By calling a logical permission, which will, through whatever path,
+         evaluate itself again, you risk creating an infinite loop.
 
     Example:
 
@@ -160,7 +163,7 @@ class UserHasPermPermission(BaseP):
         ...
         ... staff_or_awesome = user_is_staff | has_perm('awesome')
         ...
-        ... staff_or_awesome(user)  # will evaluate `user.is_staff` or `user.has_perm('awesome')`
+        ... staff_or_awesome(user)
     """
     def __init__(self, perm):
         """Initialise a new instance of UserHasPermPermission.

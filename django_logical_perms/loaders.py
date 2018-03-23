@@ -7,9 +7,10 @@ from django.conf import settings
 def load_all_permissions_modules():
     """Go through all app configs and try loading their permissions module.
 
-    By loading the permissions modules, the permissions will automatically get registered
-    with the storage backend. This will automatically enable evaluation through Django's
-    has_perms function (if the custom auth backend is loaded).
+    By loading the permissions modules, the permissions will automatically
+    get registered with the storage backend. This will automatically enable
+    evaluation through Django's has_perms function (if the custom auth
+    backend is loaded).
     """
     from django_logical_perms.apps import DjangoLogicalPermsConfig
 

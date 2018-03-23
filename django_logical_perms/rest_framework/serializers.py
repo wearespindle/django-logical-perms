@@ -10,12 +10,13 @@ from django_logical_perms.configs import FieldPermissionConfigSet
 class FieldPermissionsSerializer(serializers.ModelSerializer):
     """Incorporate per object field-based permissions in REST framework.
 
-    You can use this class as your serializer (or extend it) to have field-based permissions being
-    evaluated on every object that's getting serialized.
+    You can use this class as your serializer (or extend it) to have
+    field-based permissions being evaluated on every object that's
+    getting serialized.
 
     Note:
-        You must specify ``field_permissions`` in the Meta class. You can use ``FieldPermissionsConfigSet``
-        class for this.
+        You must specify ``field_permissions`` in the Meta class.
+        You can use ``FieldPermissionsConfigSet`` class for this.
     """
     def __init__(self, *args, **kwargs):
         if not hasattr(self.Meta, 'field_permissions'):
@@ -39,8 +40,8 @@ class FieldPermissionsSerializer(serializers.ModelSerializer):
         allowed_fields = self.Meta.field_permissions.get_permitted_field_names(
             action='view', obj=instance, user=request.user)
 
-        # Skip fields that the user is not allowed to view. Use the SkipField exception
-        # because `field.get_attribute` can also raise that.
+        # Skip fields that the user is not allowed to view. Use the SkipField
+        # exception because `field.get_attribute` can also raise that.
         for field in fields:
             try:
                 if field.field_name not in allowed_fields:
@@ -50,14 +51,16 @@ class FieldPermissionsSerializer(serializers.ModelSerializer):
             except SkipField:
                 continue
 
-            # Filter related objects that are None as we don't have to serialize them.
+            # Filter related objects that are None as we don't have to serialize
+            # them.
             check_for_none = attribute.pk if isinstance(attribute, PKOnlyObject) else attribute
             ret[field.field_name] = None if check_for_none is None else field.to_representation(attribute)
 
         return ret
 
     def is_valid(self, raise_exception=False):
-        # Initial data must be set in order to determine the fields to be updated.
+        # Initial data must be set in order to determine the fields to be
+        # updated.
         if not hasattr(self, 'initial_data'):
             raise ValueError(
                 'Cannot call `.is_valid()` as no `data=` keyword argument was '
@@ -74,8 +77,8 @@ class FieldPermissionsSerializer(serializers.ModelSerializer):
             if not permit_changes:
                 disallowed_fields.append(field_name)
 
-        # Delete the fields from the initial data set - we can't do it inside the for loop
-        # as it will update the dict that we're iterating on.
+        # Delete the fields from the initial data set - we can't do it inside
+        # the for loop as it will update the dict that we're iterating on.
         for field_name in disallowed_fields:
             del self.initial_data[field_name]
 

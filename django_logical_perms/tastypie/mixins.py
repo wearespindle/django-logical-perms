@@ -1,12 +1,12 @@
 class FieldPermissionsMixin(object):
     """Incorporate per object field-based permissions in Tastypie.
 
-    You can use this class as a mixin in your API or Resource classes to allow for compatibility with
-    object field-based permissions in your API.
+    You can use this class as a mixin in your API or Resource classes
+    to allow for compatibility with object field-based permissions in your API.
 
     Note:
-        You must specify ``field_permissions`` in the Meta class. You can use ``FieldPermissionsConfigSet``
-        class for this.
+        You must specify ``field_permissions`` in the Meta class.
+        You can use ``FieldPermissionsConfigSet`` class for this.
     """
     def update_bundle_fields(self, bundle, action):
         allowed_fields = self.Meta.field_permissions.get_permitted_field_names(
