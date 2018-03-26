@@ -38,6 +38,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django_logical_perms',
+    'tests',
+    'tests.api',
 ]
 
 MIDDLEWARE = [

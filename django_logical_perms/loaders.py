@@ -4,7 +4,7 @@ from django.apps import apps
 from django.conf import settings
 
 
-def load_all_permissions_modules():
+def load_all_permissions_modules(yield_loads=False):
     """Go through all app configs and try loading their permissions module.
 
     By loading the permissions modules, the permissions will automatically
@@ -15,10 +15,11 @@ def load_all_permissions_modules():
     from django_logical_perms.apps import DjangoLogicalPermsConfig
 
     for _, app_config in apps.app_configs.items():
-        if isinstance(app_config, DjangoLogicalPermsConfig):
-            continue
+        if not isinstance(app_config, DjangoLogicalPermsConfig):
+            success = load_permissions_module(app_config)
 
-        load_permissions_module(app_config)
+            if yield_loads:
+                yield app_config, success
 
 
 def load_permissions_module(app_config):
@@ -33,6 +34,7 @@ def load_permissions_module(app_config):
 
         import_module(permissions_module_path)
 
+        return True
     except ImportError:
         # Skip the app if the permissions module does not exist.
-        return
+        return False
