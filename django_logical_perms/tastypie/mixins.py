@@ -12,7 +12,9 @@ class FieldPermissionsMixin(object):
         allowed_fields = self.Meta.field_permissions.get_permitted_field_names(
             action=action, user=bundle.request.user, obj=bundle.obj)
 
-        for field in bundle.data.keys():
+        bundle_keys = list(bundle.data.keys())
+
+        for field in bundle_keys:
             if field not in allowed_fields:
                 del bundle.data[field]
 
