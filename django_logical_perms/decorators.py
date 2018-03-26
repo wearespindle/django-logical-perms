@@ -34,8 +34,7 @@ def permission(func=None, label=None, register=None):
 
     # Default to global settings if register is None
     if register is None:
-        setting_name = 'PERMISSION_DEFAULT_REGISTER_WITH_BACKEND'
-        register = getattr(settings, setting_name, False)
+        register = getattr(settings, 'PERMISSIONS_DEFAULT_REGISTER_WITH_BACKEND', False)
 
     # `func` will only be set if the user used the decorator without passing
     # in keyword arguments. In that case we should pass in the function to the
