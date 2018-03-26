@@ -2,3 +2,4 @@ Django==2.0.3
 Sphinx==1.7.2
 flake8==3.5.0
 djangorestframework==3.7.7
+django-tastypie==0.14.0
