@@ -21,8 +21,8 @@ class FieldPermissionsSerializer(serializers.ModelSerializer):
     def __init__(self, *args, **kwargs):
         if not hasattr(self.Meta, 'field_permissions'):
             raise ValueError(
-                 'You must specify the `field_permissions` setting in your Meta class in order '
-                 'to use the FieldPermissionSerializer.')
+                'You must specify the `field_permissions` setting in your Meta class in order '
+                'to use the FieldPermissionSerializer.')
 
         if not isinstance(self.Meta.field_permissions, FieldPermissionConfigSet):
             raise ValueError(
