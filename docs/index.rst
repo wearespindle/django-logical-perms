@@ -29,6 +29,7 @@ The code is open source and `available on GitHub`_.
    :glob:
 
    getting_started
+   basic
 
 .. toctree::
    :maxdepth: 2
