@@ -98,19 +98,26 @@ calling the ``register`` method on the default storage backend. Let's have a loo
     default_storage.register(is_user_cool | is_user_awesome, label='myapp.user_awesome_or_cool')
 
 This also works fine with class-based permissions.
+
+.. important::
+    You must register an instance of the class-based permission. Passing in a reference to the class will not work.
+
 ::
 
     class CustomPermission(P):
         def has_permission(user, obj=None):
             return True
 
-    default_storage.register(CustomPermission, label='myapp.custom_permission')
+    default_storage.register(CustomPermission(), label='myapp.custom_permission')
 
 Both manually registered permissions can now simply be tested against.
 ::
 
     user.has_perm('myapp.user_awesome_or_cool')  # True
     user.has_perm('myapp.custom_permission')  # True
+
+.. note::
+    More information on manually registering permissions can be found :ref:`here <autodiscovery>`.
 
 Where to go from here
 ---------------------

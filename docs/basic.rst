@@ -102,17 +102,20 @@ The ``P`` class has two main methods that you can override.
         If you don't want caching of the permission, you should override this method. It's signature is ``test
         (self, user, obj=None)``
 
-You will need to manually register class-based permissions to make them available to ``user.has_perm()``. Registering
-a permission is simple.
-::
+.. note::
+    Class-based permissions can't automatically register themselves. They will need to be manually registered in
+    order to be available to ``user.has_perm()``. Registering a permission is simple:
+    ::
 
-    from django_logical_perms.storages import default_storage
+        from django_logical_perms.storages import default_storage
 
-    default_storage.register(CanUpdateProfile())
-    default_storage.register(CanUpdateProfile(), label='myapp.can_update_profile')
+        default_storage.register(CanUpdateProfile())
+        default_storage.register(CanUpdateProfile(), label='myapp.can_update_profile')
 
-You can optionally also specify the ``label`` keyword argument. This will register your permission with a custom
-label. The default is based on the app name and class name.
+    You can optionally specify the ``label`` keyword argument. This will register your permission with a custom label.
+    By default the label is auto-generated based on the app name and class name.
+
+    You can read up on permissions autodiscovery and loading :ref:`here <autodiscovery>`
 
 Where to go from here
 ---------------------
@@ -122,6 +125,7 @@ evaluate the custom permissions you create. You'll want to read the following ch
 
     **Next up**
 
+        * :ref:`autodiscovery`
         * :ref:`combining_permissions`
         * :ref:`integrating_django`
         * :ref:`integrating_api_frameworks`

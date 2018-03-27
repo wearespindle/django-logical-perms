@@ -141,3 +141,16 @@ combined. This also works for non-combined permissions.
     repr((perm_a & perm_b) ^ perm_a)  # Xor<And<P(myapp.perm_a), P(myapp.perm_b)>, P(myapp.perm_a)>
 
     # .. and so on
+
+Where to go from here
+---------------------
+
+    **Next up**
+
+        * :ref:`integrating_django`
+        * :ref:`integrating_api_frameworks`
+        * :ref:`configuration`
+
+    **Advanced topics**
+
+        * :ref:`p_class`

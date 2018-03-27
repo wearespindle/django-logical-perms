@@ -30,8 +30,10 @@ The code is open source and `available on GitHub`_.
 
    getting_started
    basic
+   autodiscovery
    combining_permissions
    integrating_django
+   integrating_api_frameworks
 
 .. toctree::
    :maxdepth: 2
