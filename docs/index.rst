@@ -30,6 +30,7 @@ The code is open source and `available on GitHub`_.
 
    getting_started
    basic
+   integrating_django
 
 .. toctree::
    :maxdepth: 2

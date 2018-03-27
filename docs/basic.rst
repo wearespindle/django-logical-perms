@@ -35,6 +35,9 @@ Using the new permission is as simple as calling the function.
     can_update_profile(user_b, user_a)  # False
     can_update_profile(user_b, user_b)  # True
 
+Registering permissions
+-----------------------
+
 You can pass in additional keyword arguments to the decorator in order to automatically register the permission or to
 change its label. Registering a permission means that it gets available to Django's built-in ``user.has_perm()``
 check. Let's have look at an example.
@@ -59,8 +62,12 @@ You can now simply call these permissions using ``user.has_perm()``.
     user.has_perm('myapp.can_update_profile', obj)
     user.has_perm('myapp.another_permission', obj)
 
-Class-based permissions
------------------------
+.. note::
+    There's more information on how to integrate with Django's authentication and permissions framework on the
+    :ref:`integrating_django` page.
+
+More advanced permissions
+-------------------------
 
 More complex permissions can be implemented by creating class-based permissions. The ``permission`` decorator
 is actually just a convenience decorator that will turn your method into a class-based permission. Class-based
@@ -102,7 +109,7 @@ a permission is simple.
     from django_logical_perms.storages import default_storage
 
     default_storage.register(CanUpdateProfile())
-    default_storage.register(CanUpdateProfile, label='myapp.can_update_profile')
+    default_storage.register(CanUpdateProfile(), label='myapp.can_update_profile')
 
 You can optionally also specify the ``label`` keyword argument. This will register your permission with a custom
 label. The default is based on the app name and class name.
