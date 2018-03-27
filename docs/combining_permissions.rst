@@ -153,4 +153,4 @@ Where to go from here
 
     **Advanced topics**
 
-        * :ref:`p_class`
+        * :ref:`permissions_module`

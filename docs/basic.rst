@@ -1,3 +1,5 @@
+.. _permission_basics:
+
 Basic usage
 ###########
 
@@ -133,5 +135,5 @@ evaluate the custom permissions you create. You'll want to read the following ch
 
     **Advanced topics**
 
-        * :ref:`permission_decorator`
-        * :ref:`p_class`
+        * :ref:`decorators_module`
+        * :ref:`permissions_module`

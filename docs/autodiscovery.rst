@@ -71,4 +71,4 @@ You'll want to read the following chapters from here on out.
 
     **Advanced topics**
 
-        * :ref:`storage`
+        * :ref:`storages_module`

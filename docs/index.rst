@@ -25,7 +25,7 @@ The code is open source and `available on GitHub`_.
 
 .. toctree::
    :maxdepth: 2
-   :caption: Getting started
+   :caption: Documentation
    :glob:
 
    getting_started
@@ -34,10 +34,18 @@ The code is open source and `available on GitHub`_.
    combining_permissions
    integrating_django
    integrating_api_frameworks
+   configuration
 
 .. toctree::
    :maxdepth: 2
    :caption: Advanced topics
    :glob:
 
-   configuration
+   modules/backends
+   modules/configs
+   modules/decorators
+   modules/loaders
+   modules/permissions
+   modules/storages
+   modules/rest_framework
+   modules/tastypie

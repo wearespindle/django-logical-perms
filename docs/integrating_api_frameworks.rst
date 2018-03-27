@@ -144,8 +144,8 @@ checking non-object-level permissions if the object-level permissions was not fo
 Where to go from here
 ---------------------
 
-You've learned how to create basic permissions, optionally register them with the authentication backend and how to
-evaluate the custom permissions you create. You'll want to read the following chapters from here on out.
+You've learned how to create field-level permission config sets and use them with REST framework and Tastypie. You'll
+want to read the following chapters from here on out.
 
     **Next up**
 
@@ -153,6 +153,6 @@ evaluate the custom permissions you create. You'll want to read the following ch
 
     **Advanced topics**
 
-        * :ref:`config_impl`
-        * :ref:`rest_framework_impl`
-        * :ref:`tastypie_impl`
+        * :ref:`configs_module`
+        * :ref:`rest_framework_module`
+        * :ref:`tastypie_module`

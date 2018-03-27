@@ -39,6 +39,16 @@ if user.has_perm('app.can_contribute', repo):
     return render('CONTRIBUERS.md')
 ```
 
+### Documentation
+
+You can compile the documentation into pretty HTML format:
+
+```bash
+cd docs/
+make html
+open _build/html/index.htm
+```
+
 ## Contributing
 
 See the [CONTRIBUTING.md](CONTRIBUTING.md) file on how to contribute to this project.

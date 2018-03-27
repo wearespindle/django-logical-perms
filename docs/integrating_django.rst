@@ -132,5 +132,5 @@ You'll want to read the following chapters from here on out.
 
     **Advanced topics**
 
-        * :ref:`permission_decorator`
-        * :ref:`p_class`
+        * :ref:`decorators_module`
+        * :ref:`permissions_module`
