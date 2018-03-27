@@ -122,6 +122,7 @@ evaluate the custom permissions you create. You'll want to read the following ch
 
     **Next up**
 
+        * :ref:`combining_permissions`
         * :ref:`integrating_django`
         * :ref:`integrating_api_frameworks`
         * :ref:`configuration`

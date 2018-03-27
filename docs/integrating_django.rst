@@ -111,3 +111,19 @@ Both manually registered permissions can now simply be tested against.
 
     user.has_perm('myapp.user_awesome_or_cool')  # True
     user.has_perm('myapp.custom_permission')  # True
+
+Where to go from here
+---------------------
+
+You've learned how to integrate Django logical perms with Django's built in authentication and permissions framework.
+You'll want to read the following chapters from here on out.
+
+    **Next up**
+
+        * :ref:`integrating_api_frameworks`
+        * :ref:`configuration`
+
+    **Advanced topics**
+
+        * :ref:`permission_decorator`
+        * :ref:`p_class`

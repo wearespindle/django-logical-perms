@@ -30,6 +30,7 @@ The code is open source and `available on GitHub`_.
 
    getting_started
    basic
+   combining_permissions
    integrating_django
 
 .. toctree::
