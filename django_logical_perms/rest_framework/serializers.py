@@ -8,7 +8,8 @@ from django_logical_perms.configs import FieldPermissionConfigSet
 
 
 class FieldPermissionsSerializer(serializers.ModelSerializer):
-    """Incorporate per object field-based permissions in REST framework.
+    """
+    Incorporate per object field-based permissions in REST framework.
 
     You can use this class as your serializer (or extend it) to have
     field-based permissions being evaluated on every object that's
@@ -79,7 +80,7 @@ class FieldPermissionsSerializer(serializers.ModelSerializer):
         request = self._get_request()
         disallowed_fields = []
 
-        # Determine fields that cannot be changed
+        # Determine fields that cannot be changed.
         for field_name, field_val in self.initial_data.items():
             permit_changes = self.Meta.field_permissions.is_permitted_field(
                 action='change', field_name=field_name, obj=self.instance, user=request.user)

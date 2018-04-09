@@ -24,18 +24,18 @@ pip install git+https://github.com/wearespindle/django-logical-perms.git
 ### Running
 
 ```python
-# In your permissions.py
+# In your permissions.py.
 from django_logical_perms.decorators import permission
 
-@permission
+@permission(register=True)
 def can_contribute(user, repo=None):
     return user.is_staff or repo.public
 
-# In your view
+# In your view.
 repo = GitHubRepo('django-logical-perms')
 
 if user.has_perm('app.can_contribute', repo):
-    # Do something useful here
+    # Do something useful here.
     return render('CONTRIBUERS.md')
 ```
 

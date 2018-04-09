@@ -4,7 +4,7 @@ Getting started
 Get up and running with ``django-logical-perms`` in a matter of just minutes.
 
 Requirements
-============
+------------
 
 ``django-logical-perms`` works with Python 2 and 3. Django 1.8 and up are
 supported, including Django 2.0. It can integrate with existing API frameworks
@@ -24,7 +24,7 @@ own integration layer:
 .. _Tastypie: http://tastypieapi.org
 
 Installation
-============
+------------
 
 You can install directly from the GitHub repository.
 ::

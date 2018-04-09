@@ -5,7 +5,8 @@ from django.conf import settings
 
 
 def load_all_permissions_modules(yield_loads=False):
-    """Go through all app configs and try loading their permissions module.
+    """
+    Go through all app configs and try loading their permissions module.
 
     By loading the permissions modules, the permissions will automatically
     get registered with the storage backend. This will automatically enable
@@ -23,12 +24,17 @@ def load_all_permissions_modules(yield_loads=False):
 
 
 def load_permissions_module(app_config):
-    """Loads the permissions module for the given app.
+    """
+    Loads the permissions module for the given app.
 
-    :param app_config: The app's AppConfig instance.
+    Args:
+        app_config (AppConfig): The app's AppConfig instance.
+
+    Returns:
+        bool: True if the permissions module could be imported successfully.
     """
     try:
-        # Import and only process apps with a permissions module
+        # Import and only process apps with a permissions module.
         permissions_module_name = getattr(settings, 'PERMISSIONS_MODULE_NAME', 'permissions')
         permissions_module_path = '%s.%s' % (app_config.name, permissions_module_name)
 

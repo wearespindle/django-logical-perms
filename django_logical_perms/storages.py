@@ -3,28 +3,37 @@ from django_logical_perms.permissions import BaseLogicalPermission
 
 
 class PermissionStorage(object):
-    """The default storage class for logical permissions."""
+    """
+    The default storage class for logical permissions.
+    """
     def __init__(self):
         self._permissions = {}
 
     def get_all_permissions(self):
-        """Return a list of all currently registered permissions.
+        """
+        Return a list of all currently registered permissions.
 
-        :returns: dict -- A dictionary of all currently registered permissions.
+        Returns:
+            dict: A dictionary of all currently registered permissions.
         """
         return self._permissions
 
     def register(self, permission, label=None):
-        """Register a permission with the storage instance.
+        """
+        Register a permission with the storage instance.
 
         Note:
             The ``label`` param will always prioritize over the permission
             instance label. If you do not explicitly specify a label, the
             permission's label will be used (``permission.label``).
 
-        :param permission: BaseLogicalPermission -- The permission to register.
-        :param label: str, optional -- Custom label for the permission.
-        :raises: ValueError
+        Args:
+            permission (BaseLogicalPermission): The permission to register.
+            label (str): An optional custom label for the permission.
+
+        Raises:
+            ValueError: If the permission is not an instance of the
+            BaseLogicalPermission class.
         """
         if not isinstance(permission, BaseLogicalPermission):
             raise ValueError(
@@ -46,13 +55,20 @@ class PermissionStorage(object):
         self._permissions[label] = permission
 
     def get_permission(self, label):
-        """Returns the permission from the storage.
+        """
+        Returns the permission from the storage.
 
         This function will always return the permission instance from the
         storage. If the permission is not found it will raise a ValueError.
 
-        :param label: str -- The permission label to get.
-        :raises: ValueError
+        Args:
+            label (str): The permission's label.
+
+        Raises:
+            PermissionNotFound: If the permission was not found.
+
+        Returns:
+            BaseLogicalPermission: The permission from the storage.
         """
         permission = self.get_all_permissions().get(label, None)
 

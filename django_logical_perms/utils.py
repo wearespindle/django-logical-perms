@@ -6,5 +6,5 @@ def get_permission_label(target):
 
     return label_format.format(
         app_name='.'.join(target.__module__.split('.')[:-1]),
-        perm_name=target.__name__
+        perm_name=target.__name__,
     )

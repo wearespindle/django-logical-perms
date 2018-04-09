@@ -1,5 +1,6 @@
 class FieldPermissionsMixin(object):
-    """Incorporate per object field-based permissions in Tastypie.
+    """
+    Incorporate per object field-based permissions in Tastypie.
 
     You can use this class as a mixin in your API or Resource classes
     to allow for compatibility with object field-based permissions in your API.

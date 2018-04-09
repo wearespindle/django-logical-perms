@@ -3,7 +3,6 @@ from unittest import skipIf
 
 from django import VERSION as DJANGO_VERSION
 from django.contrib.auth.models import User, AnonymousUser
-from django.http import HttpResponse
 from django.test import TestCase
 from django.urls import reverse
 
@@ -14,7 +13,9 @@ from tests.api.rest_framework.serializers import UserSerializer
 
 
 def create_random_users():
-    """ Create some random users """
+    """
+    Create some random users
+    """
     User.objects.create_user(username='user1', password='user1', email='user1@localhost', is_staff=True)
     User.objects.create_user(username='user2', password='user2', email='user2@localhost')
     User.objects.create_user(username='user3', password='user3', email='user3@localhost')
@@ -26,7 +27,7 @@ class RestFrameworkTestCase(TestCase):
 
     def test_serializer_validators(self):
         # This should fail because Meta.field_permissions is required
-        # but was not defined
+        # but was not defined.
         with self.assertRaises(ValueError):
             class InvalidSerializer(FieldPermissionsSerializer):
                 class Meta:
@@ -35,7 +36,7 @@ class RestFrameworkTestCase(TestCase):
             InvalidSerializer()
 
         # This should fail because Meta.field_permissions is not an
-        # instance of FieldPermissionConfigSet
+        # instance of FieldPermissionConfigSet.
         with self.assertRaises(ValueError):
             class InvalidSerializer(FieldPermissionsSerializer):
                 class Meta:
@@ -44,56 +45,56 @@ class RestFrameworkTestCase(TestCase):
 
             InvalidSerializer()
 
-        # This should be instantiated without any problems
+        # This should be instantiated without any problems.
         UserSerializer()
 
         # This should raise ValueError again because no initial
-        # data was passed in
+        # data was passed in.
         with self.assertRaises(ValueError):
             UserSerializer().is_valid()
 
     def _test_always_visible_fields(self, resp):
-        # IDs should be visible
+        # IDs should be visible.
         self.assertTrue('id' in resp.data[0])
         self.assertTrue('id' in resp.data[1])
         self.assertTrue('id' in resp.data[2])
 
-        # Usernames should be visible
+        # Usernames should be visible.
         self.assertTrue('username' in resp.data[0])
         self.assertTrue('username' in resp.data[1])
         self.assertTrue('username' in resp.data[2])
 
-        # First names should be visible
+        # First names should be visible.
         self.assertTrue('first_name' in resp.data[0])
         self.assertTrue('first_name' in resp.data[1])
         self.assertTrue('first_name' in resp.data[2])
 
-        # Last names should be visible
+        # Last names should be visible.
         self.assertTrue('last_name' in resp.data[0])
         self.assertTrue('last_name' in resp.data[1])
         self.assertTrue('last_name' in resp.data[2])
 
     def test_anonymous_serializer_view(self):
-        # Request the user list API as an anonymous user
+        # Request the user list API as an anonymous user,
         self.client.logout()
         resp = self.client.get(reverse('user-list'))
         self.assertEqual(resp.status_code, 200)
 
-        # ID, username, first name and last name should always be visible
+        # ID, username, first name and last name should always be visible.
         self._test_always_visible_fields(resp)
 
-        # Admin users should have their email address included, normal users not
+        # Admin users should have their email address included, normal users not.
         self.assertTrue('email' in resp.data[0])
         self.assertTrue('email' not in resp.data[1])
         self.assertTrue('email' not in resp.data[2])
 
     def test_admin_serializer_view(self):
-        # Request the user list API as an admin user
+        # Request the user list API as an admin user.
         self.client.login(username='user1', password='user1')
         resp = self.client.get(reverse('user-list'))
         self.assertEqual(resp.status_code, 200)
 
-        # ID, username, first name and last name should always be visible
+        # ID, username, first name and last name should always be visible.
         self._test_always_visible_fields(resp)
 
         # Admins should be able to see all e-mail addresses.
@@ -102,12 +103,12 @@ class RestFrameworkTestCase(TestCase):
         self.assertTrue('email' in resp.data[2])
 
     def test_user_serializer_view(self):
-        # Request the user list API as a normal user
+        # Request the user list API as a normal user.
         self.client.login(username='user2', password='user2')
         resp = self.client.get(reverse('user-list'))
         self.assertEqual(resp.status_code, 200)
 
-        # ID, username, first name and last name should always be visible
+        # ID, username, first name and last name should always be visible.
         self._test_always_visible_fields(resp)
 
         # Users should be able to see admin and their own e-mail address.
@@ -116,17 +117,17 @@ class RestFrameworkTestCase(TestCase):
         self.assertTrue('email' not in resp.data[2])
 
     def test_anonymous_serializer_change(self):
-        # Cache old user data
+        # Cache old user data.
         old_user = User.objects.get(pk=2)
 
-        # Try changing every possible field as an anonymous user
+        # Try changing every possible field as an anonymous user.
         self.client.logout()
         url = reverse('user-detail', kwargs={'pk': 2})
         data = json.dumps({k: 'changed@localhost' for k in UserSerializer.Meta.fields})
         resp = self.client.patch(url, data=data, content_type='application/json')
         self.assertEqual(resp.status_code, 200)
 
-        # Nothing should have changed
+        # Nothing should have changed.
         user = User.objects.get(pk=2)
 
         self.assertEqual(user.id, old_user.id)
@@ -137,17 +138,17 @@ class RestFrameworkTestCase(TestCase):
         self.assertEqual(user.email, old_user.email)
 
     def test_admin_serializer_change(self):
-        # Cache old user data
+        # Cache old user data.
         old_user = User.objects.get(pk=2)
 
-        # Try changing every possible field as an admin user
+        # Try changing every possible field as an admin user.
         self.client.login(username='user1', password='user1')
         url = reverse('user-detail', kwargs={'pk': 2})
         data = json.dumps({k: 'changed@localhost' for k in UserSerializer.Meta.fields})
         resp = self.client.patch(url, data=data, content_type='application/json')
         self.assertEqual(resp.status_code, 200)
 
-        # Admins can change first name, last name and email of normal users
+        # Admins can change first name, last name and email of normal users.
         user = User.objects.get(pk=2)
 
         self.assertEqual(user.id, old_user.id)
@@ -158,17 +159,17 @@ class RestFrameworkTestCase(TestCase):
         self.assertEqual(user.email, 'changed@localhost')
 
     def test_user_serializer_change(self):
-        # Cache old user data
+        # Cache old user data.
         old_user = User.objects.get(pk=2)
 
-        # Try changing every possible field as a normal user
+        # Try changing every possible field as a normal user.
         self.client.login(username='user2', password='user2')
         url = reverse('user-detail', kwargs={'pk': 2})
         data = json.dumps({k: 'changed@localhost' for k in UserSerializer.Meta.fields})
         resp = self.client.patch(url, data=data, content_type='application/json')
         self.assertEqual(resp.status_code, 200)
 
-        # Users can change their first name, last name and email
+        # Users can change their first name, last name and email.
         user = User.objects.get(pk=2)
 
         self.assertEqual(user.id, old_user.id)
@@ -179,17 +180,17 @@ class RestFrameworkTestCase(TestCase):
         self.assertEqual(user.email, 'changed@localhost')
 
     def test_other_user_serializer_change(self):
-        # Cache old user data
+        # Cache old user data.
         old_user = User.objects.get(pk=2)
 
-        # Try changing every possible field as a normal user
+        # Try changing every possible field as a normal user.
         self.client.login(username='user3', password='user3')
         url = reverse('user-detail', kwargs={'pk': 2})
         data = json.dumps({k: 'changed@localhost' for k in UserSerializer.Meta.fields})
         resp = self.client.patch(url, data=data, content_type='application/json')
         self.assertEqual(resp.status_code, 200)
 
-        # Users can not change other's first name, last name and email
+        # Users can not change other's first name, last name and email.
         user = User.objects.get(pk=2)
 
         self.assertEqual(user.id, old_user.id)
@@ -200,11 +201,10 @@ class RestFrameworkTestCase(TestCase):
         self.assertEqual(user.email, old_user.email)
 
 
+# Tastypie does not currently run correctly on Django 2.0.
+# See also: https://github.com/django-tastypie/django-tastypie/issues/1532
 @skipIf(DJANGO_VERSION > (1, 11, 99), "Tastypie requires Django <= 1.11")
 class TastypieTestCase(TestCase):
-    # Tastypie does not currently run correctly on Django 2.0.
-    # See also: https://github.com/django-tastypie/django-tastypie/issues/1532
-
     def setUp(self):
         create_random_users()
 
@@ -225,33 +225,33 @@ class TastypieTestCase(TestCase):
         return response
 
     def _test_always_visible_fields(self, resp):
-        # IDs should be visible
+        # IDs should be visible.
         self.assertTrue('id' in resp.data['objects'][0])
         self.assertTrue('id' in resp.data['objects'][1])
         self.assertTrue('id' in resp.data['objects'][2])
 
-        # Usernames should be visible
+        # Usernames should be visible.
         self.assertTrue('username' in resp.data['objects'][0])
         self.assertTrue('username' in resp.data['objects'][1])
         self.assertTrue('username' in resp.data['objects'][2])
 
-        # First names should be visible
+        # First names should be visible.
         self.assertTrue('first_name' in resp.data['objects'][0])
         self.assertTrue('first_name' in resp.data['objects'][1])
         self.assertTrue('first_name' in resp.data['objects'][2])
 
-        # Last names should be visible
+        # Last names should be visible.
         self.assertTrue('last_name' in resp.data['objects'][0])
         self.assertTrue('last_name' in resp.data['objects'][1])
         self.assertTrue('last_name' in resp.data['objects'][2])
 
     def test_user_serializer_view(self):
-        # Request the user list API as a normal user
+        # Request the user list API as a normal user.
         self.client.login(username='user2', password='user2')
         resp = self._process_response(self.client.get(self.reverse('api_dispatch_list')))
         self.assertEqual(resp.status_code, 200)
 
-        # ID, username, first name and last name should always be visible
+        # ID, username, first name and last name should always be visible.
         self._test_always_visible_fields(resp)
 
         # Users should be able to see admin and their own e-mail address.
@@ -260,17 +260,17 @@ class TastypieTestCase(TestCase):
         self.assertTrue('email' not in resp.data['objects'][2])
 
     def test_admin_serializer_change(self):
-        # Cache old user data
+        # Cache old user data.
         old_user = User.objects.get(pk=2)
 
-        # Try changing every possible field as an admin user
+        # Try changing every possible field as an admin user.
         self.client.login(username='user1', password='user1')
         url = self.reverse('api_dispatch_detail', pk=2)
         data = json.dumps({k: 'changed@localhost' for k in UserSerializer.Meta.fields})
         resp = self._process_response(self.client.patch(url, data=data, content_type='application/json'))
         self.assertEqual(resp.status_code, 202)
 
-        # Admins can change first name, last name and email of normal users
+        # Admins can change first name, last name and email of normal users.
         user = User.objects.get(pk=2)
 
         self.assertEqual(user.id, old_user.id)
@@ -281,17 +281,17 @@ class TastypieTestCase(TestCase):
         self.assertEqual(user.email, 'changed@localhost')
 
     def test_user_serializer_change(self):
-        # Cache old user data
+        # Cache old user data.
         old_user = User.objects.get(pk=2)
 
-        # Try changing every possible field as a normal user
+        # Try changing every possible field as a normal user.
         self.client.login(username='user2', password='user2')
         url = self.reverse('api_dispatch_detail', pk=2)
         data = json.dumps({k: 'changed@localhost' for k in UserSerializer.Meta.fields})
         resp = self._process_response(self.client.patch(url, data=data, content_type='application/json'))
         self.assertEqual(resp.status_code, 202)
 
-        # Users can change their first name, last name and email
+        # Users can change their first name, last name and email.
         user = User.objects.get(pk=2)
 
         self.assertEqual(user.id, old_user.id)
@@ -302,17 +302,17 @@ class TastypieTestCase(TestCase):
         self.assertEqual(user.email, 'changed@localhost')
 
     def test_other_user_serializer_change(self):
-        # Cache old user data
+        # Cache old user data.
         old_user = User.objects.get(pk=2)
 
-        # Try changing every possible field as a normal user
+        # Try changing every possible field as a normal user.
         self.client.login(username='user3', password='user3')
         url = self.reverse('api_dispatch_detail', pk=2)
         data = json.dumps({k: 'changed@localhost' for k in UserSerializer.Meta.fields})
         resp = self._process_response(self.client.patch(url, data=data, content_type='application/json'))
         self.assertEqual(resp.status_code, 202)
 
-        # Users can not change other's first name, last name and email
+        # Users can not change other's first name, last name and email.
         user = User.objects.get(pk=2)
 
         self.assertEqual(user.id, old_user.id)
@@ -329,7 +329,7 @@ class TastypieTestCase(TestCase):
         single_obj = object()
         multiple_obj = [object(), object()]
 
-        # This permission should not be granted
+        # This permission should not be granted.
         self.assertFalse(auth.check_user_perm(user, 'tests.tastypie_auth_test', None))
         self.assertFalse(auth.check_user_perm(user, 'tests.tastypie_auth_test', single_obj))
         self.assertFalse(auth.check_user_perm(user, 'tests.tastypie_auth_test', multiple_obj))
@@ -342,10 +342,10 @@ class TastypieTestCase(TestCase):
         def tastypie_auth_test(user, obj=None):
             return obj is single_obj or obj in multiple_obj
 
-        # Re-fetch the user to clear cache
+        # Re-fetch the user to clear cache.
         user = AnonymousUser()
 
-        # Permission should now be granted
+        # Permission should now be granted.
         self.assertFalse(auth.check_user_perm(user, 'tests.tastypie_auth_test', None))
         self.assertTrue(auth.check_user_perm(user, 'tests.tastypie_auth_test', single_obj))
         self.assertTrue(auth.check_user_perm(user, 'tests.tastypie_auth_test', multiple_obj))

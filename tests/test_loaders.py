@@ -15,6 +15,6 @@ class PermissionLoaderTestCase(TestCase):
 
     def test_permission_loader_without_yield(self):
         # The loader shouldn't yield any results if we don't
-        # explicitly set the yield_loads parameter
+        # explicitly set the yield_loads parameter.
         loaded_apps = [x for x in load_all_permissions_modules()]
         self.assertEqual(loaded_apps, [])

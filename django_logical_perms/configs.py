@@ -2,10 +2,13 @@ from django_logical_perms.permissions import BaseLogicalPermission
 
 
 class FieldPermissionConfig(object):
-    """Define permissions for a specific field of an object."""
+    """
+    Define permissions for a specific field of an object.
+    """
 
     def __init__(self, fields, can_view=None, can_change=None):
-        """Define permissions for a specific field of an object.
+        """
+        Define permissions for a specific field of an object.
 
         You must define one or more fields that the permission applies to.
         You can leave ``can_view`` and ``can_change`` so that they will
@@ -16,9 +19,12 @@ class FieldPermissionConfig(object):
             list of allowed fields (view or change), the static list will
             take priority over the FieldPermissionConfig instance.
 
-        :param fields: tuple, list -- Fields these permissions apply to.
-        :param can_view: bool, BaseLogicalPermission -- Either a static boolean or a BaseLogicalPermission.
-        :param can_change: bool, BaseLogicalPermission -- Either a static boolean or a BaseLogicalPermission.
+        Args:
+            fields (tuple, list): Fields these permissions apply to.
+            can_view (bool, BaseLogicalPermission): Either a static boolean or
+                a BaseLogicalPermission instance.
+            can_change (bool, BaseLogicalPermission): Either a static boolean or
+                a BaseLogicalPermission instance.
         """
         if not isinstance(fields, tuple) and not isinstance(fields, list):
             raise ValueError('`fields` must be a tuple or list.')
@@ -38,11 +44,16 @@ class FieldPermissionConfig(object):
         self._can_change_perm = can_change or False
 
     def _check_perm(self, perm, user, obj):
-        """Check permission for the given user and object.
+        """
+        Check permission for the given user and object.
 
-        :param perm: bool, BaseLogicalPermission -- The permission to check against.
-        :param obj: object -- The object to pass into the permission evaluator.
-        :param user: User -- A User instance to check the permission against.
+        Args:
+            perm (bool, BaseLogicalPermission): The permission to check against.
+            obj (object): The object to pass into the permission evaluator.
+            user (User): A User instance to check the permission against.
+
+        Returns:
+            bool: True if the permission was granted.
         """
         if isinstance(perm, BaseLogicalPermission):
             return perm(user, obj)
@@ -50,26 +61,35 @@ class FieldPermissionConfig(object):
         return perm
 
     def can_change(self, user, obj=None):
-        """Check change permission for the given user and optional object.
+        """
+        Check change permission for the given user and optional object.
 
-        :param user: User -- A User instance to check the permission against.
-        :param obj: object, optional -- An optional object to check the
-                    permission against.
+        Args:
+            user (User): A User instance to check the permission against.
+            obj (object): An optional object to check the permission against.
+
+        Returns:
+            bool: True if the user can change the field on the object.
         """
         return self._check_perm(self._can_change_perm, user, obj)
 
     def can_view(self, user, obj=None):
-        """Check view permission for the given user and optional object.
+        """
+        Check view permission for the given user and optional object.
 
-        :param user: User -- A User instance to check the permission against.
-        :param obj: object, optional -- An optional object to check the
-                    permission against.
+        Args:
+            user (User): A User instance to check the permission against.
+            obj (object): An optional object to check the permission against.
+
+        Returns:
+            bool: True if the user is allowed to view the object field.
         """
         return self._check_perm(self._can_view_perm, user, obj)
 
 
 class FieldPermissionConfigSet(object):
-    """Define permissions using a set of ``FieldPermissionConfig`` instances.
+    """
+    Define permissions using a set of ``FieldPermissionConfig`` instances.
 
     Note:
         Statically allowed fields get priority over dynamically configured
@@ -97,62 +117,77 @@ class FieldPermissionConfigSet(object):
                         'dynamic permission config.')
 
     def _validate_action(self, action):
-        """Validates whether the action string is valid
+        """
+        Validates whether the action string is valid.
 
-        :param action: str -- Action string
-        :raises: ValueError
+        Args:
+            action (str): Action string to validate.
+
+        Raises:
+            ValueError
         """
         if action not in self.ACTIONS:
             raise ValueError('Only change and view are supported actions.')
 
     def _iterate_permitted_field_names(self, action, user, obj=None):
-        """Iterates over all permitted fields.
-
-        :param action: str -- Action to check permission against
-        :param user: User -- A User instance to check the permission against.
-        :param obj: object, optional -- An optional object to check the
-                    permission against.
         """
-        # First iterate over all the statically allowed fields
+        Iterates over all permitted fields.
+
+        Args:
+            action (str): Action to check permission against.
+            user (User): A User instance to check the permission against.
+            obj (object): An optional object to check the permission against.
+        """
+        # First iterate over all the statically allowed fields.
         for field_name in getattr(self, 'allow_{}'.format(action)):
             yield field_name
 
-        # Now iterate over the dynamically allowed fields
+        # Now iterate over the dynamically allowed fields.
         for config in self.field_config:
             if getattr(config, 'can_{}'.format(action))(user, obj):
                 for field_name in config.fields:
                     yield field_name
 
     def get_permitted_field_names(self, action, user, obj=None):
-        """Get a list of all permitted fields.
+        """
+        Get a list of all permitted fields.
 
-        :param action: str -- Action to check permission against
-        :param user: User -- A User instance to check the permission against.
-        :param obj: object, optional -- An optional object to check against.
-        :return: list -- List of permitted fields for the given action,
-                 user and optional object.
+        Args:
+            action (str): Action to check permission against.
+            user (User): A User instance to check the permission against.
+            obj (object): An optional object to check against.
+
+        Returns:
+            list: List of permitted fields for the given action, user
+            and optional object.
         """
         self._validate_action(action)
         return [field_name for field_name in self._iterate_permitted_field_names(action, user, obj)]
 
     def is_permitted_field(self, action, field_name, user, obj=None):
-        """Check if the given action is permitted for the user.
+        """
+        Check if the given action is permitted for the user.
 
-        :param action: str -- Action to check against.
-        :param field_name: str -- The field name to check against.
-        :param user: User -- A User instance to check against.
-        :param obj: object, optional -- An optional object to check against.
+        Args:
+            action (str): Action to check against.
+            field_name (str): The field name to check against.
+            user (User): A User instance to check against.
+            obj (object): An optional object to check against
+
+        Returns:
+            bool: True if the user is allowed the action on the specified field
+            of the optional object.
         """
         self._validate_action(action)
 
-        # Short circuit
+        # Short circuit.
         if field_name in getattr(self, 'allow_{}'.format(action), []):
             return True
 
-        # Get the field's config and permissions
+        # Get the field's config and permissions.
         for config in self.field_config:
             if field_name in config.fields:
                 return getattr(config, 'can_{}'.format(action))(user, obj)
 
-        # Field is not defined, do not allow
+        # Field is not defined, do not allow.
         return False

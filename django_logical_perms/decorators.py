@@ -7,14 +7,19 @@ from functools import partial, wraps
 
 
 def permission(func=None, label=None, register=None):
-    """Decorator for turning an ordinary function into a permission.
+    """
+    Decorator for turning an ordinary function into a permission.
 
-    :param func: The permission evaluator.
-    :param label: Optional label for the permission. If it's not set, a
-                  label will automatically be generated for the permission.
-    :param register: Optional, whether to automatically register the permission
-                     with the authentication backend. If it's not set, the
-                     default settings will be used.
+    Args:
+        func (callable): The permission evaluator.
+        label (str): Optional label for the permission. If it's not set, a
+                     label will automatically be generated for the permission.
+        register (bool): Optional, whether to automatically register the
+                         permission with the authentication backend. If it's
+                         not set, the default settings will be used.
+
+    Raises:
+        ValueError if ``func`` is not a callable
     """
     if func is None:
         return partial(permission, label=label, register=register)

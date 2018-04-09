@@ -23,7 +23,7 @@ django.setup()
 # -- Project information -----------------------------------------------------
 
 project = 'django-logical-perms'
-copyright = '2018, Robert de Vries'
+copyright = '2018, Devhouse Spindle'
 author = 'Robert de Vries'
 
 # The short X.Y version
@@ -82,7 +82,7 @@ pygments_style = 'sphinx'
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 #
-html_theme = "sphinx_rtd_theme"
+html_theme = 'sphinx_rtd_theme'
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
@@ -147,7 +147,7 @@ latex_documents = [
 # (source start file, name, description, authors, manual section).
 man_pages = [
     (master_doc, 'django-logical-perms', 'django-logical-perms Documentation',
-     [author], 1)
+     [author], 1),
 ]
 
 

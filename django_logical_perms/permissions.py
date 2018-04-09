@@ -2,27 +2,37 @@ from django_logical_perms.utils import get_permission_label
 
 
 class BaseLogicalPermission(object):
-    """The very base implementation of a logical permission."""
+    """
+    The very base implementation of a logical permission.
+    """
 
     label = None
     """str: Permission label. Used to register the permission and in its representation."""
 
     def has_permission(self, user, obj=None):
-        """Test the permission against a User and an optional object.
+        """
+        Test the permission against a User and an optional object.
 
         You should override this method to implement custom permission
         evaluation. This method should not do caching as that's already
         handled in the ``test`` method below.
 
-        :param user: A Django User object to test the permission against.
-        :param obj: An optional object to do object-level permissions.
-        :returns: bool -- Whether or not the user has permission.
-        :raises: NotImplementedError
+        Args:
+            user (User): A Django User object to test the permission against.
+            obj (object): An optional object to do object-level permissions.
+
+        Returns:
+            bool: True if the permission was granted.
+
+        Raises:
+            NotImplementedError: This method must be implemented in classes
+            that extend this base class.
         """
         raise NotImplementedError()
 
     def test(self, user, obj=None):
-        """Test and caches the permission against a User and an optional object.
+        """
+        Test and caches the permission against a User and an optional object.
 
         Note:
             This method will try getting the result from cache first. If there
@@ -34,11 +44,14 @@ class BaseLogicalPermission(object):
             own caching algorithm. You should override the ``has_permission``
             method to implement the permission.
 
-        :param user: A Django user to test the permission against.
-        :param obj: An optional object to do object-level permissions.
-        :returns: bool -- Whether or not the user has permission.
+        Args:
+            user (User): A Django User object to test the permission against.
+            obj (object): An optional object to do object-level permissions.
+
+        Returns:
+            bool: True if the permission was granted.
         """
-        # Build a cache if it's not yet set
+        # Build a cache if it's not yet set.
         if not hasattr(user, '_dlp_cache'):
             setattr(user, '_dlp_cache', {})
 
@@ -46,23 +59,31 @@ class BaseLogicalPermission(object):
         if (self, obj) in user._dlp_cache:
             return user._dlp_cache[(self, obj)]
 
-        # Permission has not yet been cached. Evaluate through ``has_permission``,
-        # save to the cache and return the result.
+        # Permission has not yet been cached. Evaluate through
+        # ``has_permission``, save to the cache and return the result.
         result = user._dlp_cache[(self, obj)] = self.has_permission(user, obj)
 
         return result
 
     def __call__(self, user, obj=None):
-        """Test the permissions against a User and an optional object.
+        """
+        Test the permissions against a User and an optional object.
 
-        :returns: bool -- Whether or not the user has permission.
+        Args:
+            user (User): A Django User object to test the permission against.
+            obj (object): An optional object to do object-level permissions.
+
+        Returns:
+            bool: True if the permission was granted.
         """
         return self.test(user, obj)
 
     def __repr__(self):
-        """Get textual representation of the permission object.
+        """
+        Get textual representation of the permission object.
 
-        :returns: str -- Textual representation of the permission object.
+        Returns:
+            str: Textual representation of the permission object.
         """
         return 'LogicalPermission(%s)' % self.label
 
@@ -88,22 +109,28 @@ class BaseLogicalPermission(object):
 
 
 class LogicalPermission(BaseLogicalPermission):
-    """A base class for class-based permissions."""
+    """
+    A base class for logical class-based permissions.
+    """
 
     def __init__(self):
-        # Set up a label if it's not statically assigned
+        # Set up a label if it's not statically assigned.
         if self.label is None:
             self.label = get_permission_label(self.__class__)
 
 
 class FunctionalLogicalPermission(BaseLogicalPermission):
-    """A wrapper class for small function-based logical permissions."""
+    """
+    A wrapper class for small function-based logical permissions.
+    """
 
     def __init__(self, check_func, label=None):
-        """A new logical permission using the passed in ``check_func``.
+        """
+        A new logical permission using the passed in ``check_func``.
 
-        :param check_func: The permission evaluator.
-        :param label: Custom label for the permission.
+        Args:
+            check_func (callable): The permission evaluator.
+            label (str): Custom label for the permission.
         """
         if self.label is None and label is None:
             label = get_permission_label(check_func)
@@ -113,13 +140,15 @@ class FunctionalLogicalPermission(BaseLogicalPermission):
 
 
 class ProcessedLogicalPermission(BaseLogicalPermission):
-    """A wrapper class for pre-processed permissions.
+    """
+    A wrapper class for pre-processed permissions.
 
     This class is especially useful to omit a label and provide your own
     description of the permission that will show up when calling ``repr()``.
 
     It's currently only used internally when combining or inverting permissions
-    so that resulting LogicalPermission instances will show up as  ``Not<LogicalPermission(...)>``,
+    so that resulting LogicalPermission instances will show up as
+    ``Not<LogicalPermission(...)>``,
     ``Or<LogicalPermission(...), LogicalPermission(...)>`` and so on.
 
     The instance will not have a (auto generated) label, so that they can't be
@@ -127,10 +156,12 @@ class ProcessedLogicalPermission(BaseLogicalPermission):
     during registration.
     """
     def __init__(self, check_func, desc):
-        """Initialise a new instance of ProcessedLogicalPermission.
+        """
+        Initialise a new instance of ProcessedLogicalPermission.
 
-        :param check_func: The permission evaluator.
-        :param desc: A description (not a label) for the permission.
+        Args:
+            check_func (callable): The permission evaluator.
+            desc (str): A description (not a label!) for the permission.
         """
         self.has_permission = check_func
         self._desc = desc
@@ -140,7 +171,8 @@ class ProcessedLogicalPermission(BaseLogicalPermission):
 
 
 class UserHasPermPermission(BaseLogicalPermission):
-    """Built-in logical permission for Django's ``user.has_perm`` feature.
+    """
+    Built-in logical permission for Django's ``user.has_perm`` feature.
 
     You can use this class to combine your own logical permissions with Django's
     static permissions.
@@ -166,9 +198,11 @@ class UserHasPermPermission(BaseLogicalPermission):
         ... staff_or_awesome(user)
     """
     def __init__(self, perm):
-        """Initialise a new instance of UserHasPermPermission.
+        """
+        Initialise a new instance of UserHasPermPermission.
 
-        :param perm: The permission to pass into ``user.has_perm``
+        Args:
+            perm (str): The permission to pass into ``user.has_perm``.
         """
         self.label = 'has_permission: {}'.format(perm)
         self.perm = perm

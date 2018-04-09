@@ -40,7 +40,8 @@ class FieldPermissionsTestCase(TestCase):
         self.assertFalse(config.can_change(user))
 
     def test_field_config_default(self):
-        # By not specifying can_view and/or can_change, they should default to False
+        # By not specifying can_view and/or can_change, they should default
+        # to False.
         user = AnonymousUser()
         config = FieldPermissionConfig(fields=['field_a'])
 
@@ -48,22 +49,22 @@ class FieldPermissionsTestCase(TestCase):
         self.assertFalse(config.can_change(user))
 
     def test_field_config_validation(self):
-        # Fields must be a tuple or list
+        # Fields must be a tuple or list.
         with self.assertRaises(ValueError):
             FieldPermissionConfig(fields='this is not a list')
 
-        # Fields must specify at least one field
+        # Fields must specify at least one field.
         with self.assertRaises(ValueError):
             FieldPermissionConfig(fields=[])
 
-        # can_view and can_change must be BaseLogicalPermission instance or bool
+        # can_view and can_change must be BaseLogicalPermission instance or bool.
         with self.assertRaises(ValueError):
             FieldPermissionConfig(fields=['blep'], can_view='this is invalid')
 
         with self.assertRaises(ValueError):
             FieldPermissionConfig(fields=['blep'], can_change='this is invalid')
 
-        # These are all valid
+        # These are all valid.
         perm = FunctionalLogicalPermission(lambda user_, obj=None: True)
 
         FieldPermissionConfig(fields=('blep',))
@@ -73,13 +74,13 @@ class FieldPermissionsTestCase(TestCase):
         FieldPermissionConfig(fields=['blep'], can_view=perm | perm, can_change=perm & perm)
 
     def test_field_config_set_validation(self):
-        # An empty instantiation should fail because we need at least one field in
-        # the field_config, allow_view or allow_change properties.
+        # An empty instantiation should fail because we need at least one field
+        # in the field_config, allow_view or allow_change properties.
         with self.assertRaises(ValueError):
             FieldPermissionConfigSet()
 
         # This should raise a ValueError because we defined a dynamic
-        # and a static permission for field_a
+        # and a static permission for field_a.
         with self.assertRaises(ValueError):
             class ConfigSetInvalid(FieldPermissionConfigSet):
                 field_config = [FieldPermissionConfig(fields=['field_a'])]
@@ -87,14 +88,14 @@ class FieldPermissionsTestCase(TestCase):
 
             ConfigSetInvalid()
 
-        # The following set is valid
+        # The following set is valid.
         config = self._get_valid_config_set_cls()()
 
-        # We should at least have view and change actions
+        # We should at least have view and change actions.
         config._validate_action('view')
         config._validate_action('change')
 
-        # Invalid actions should raise ValueErrors
+        # Invalid actions should raise ValueErrors.
         with self.assertRaises(ValueError):
             config._validate_action('blep')
 
@@ -103,20 +104,20 @@ class FieldPermissionsTestCase(TestCase):
         other_user = User.objects.create(username=uuid.uuid4())  # uuid for randomness
         config = self._get_valid_config_set_cls()()
 
-        # Test view permissions
+        # Test view permissions.
         self.assertEqual(config.get_permitted_field_names('view', anon_user), ['field_c', 'field_a', 'field_b'])
         self.assertEqual(config.get_permitted_field_names('view', other_user), ['field_c', 'field_a'])
 
-        # Test change permissions
+        # Test change permissions.
         self.assertEqual(config.get_permitted_field_names('change', anon_user), ['field_d', 'field_a'])
         self.assertEqual(config.get_permitted_field_names('change', other_user), ['field_d', 'field_a'])
 
-        # Now check through is_permitted_field
+        # Now check through is_permitted_field.
         self.assertTrue(config.is_permitted_field('view', 'field_b', anon_user))
         self.assertTrue(config.is_permitted_field('view', 'field_c', anon_user))
         self.assertFalse(config.is_permitted_field('view', 'field_b', other_user))
         self.assertTrue(config.is_permitted_field('view', 'field_c', other_user))
 
-        # If the field is not specified it should not be viewable or changeable
+        # If the field is not specified it should not be viewable or changeable.
         self.assertFalse(config.is_permitted_field('view', 'field_z', anon_user))
         self.assertFalse(config.is_permitted_field('view', 'field_z', other_user))
