@@ -1,5 +1,6 @@
 from django.core.exceptions import PermissionDenied
 
+from django_logical_perms.exceptions import PermissionNotFound
 from django_logical_perms.storages import default_storage
 
 
@@ -33,5 +34,5 @@ class LogicalPermissionsBackend(object):
 
             return True
 
-        except ValueError:
+        except PermissionNotFound:
             return False

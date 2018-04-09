@@ -1,3 +1,4 @@
+from django_logical_perms.exceptions import PermissionNotFound
 from django_logical_perms.permissions import BaseLogicalPermission
 
 
@@ -53,10 +54,10 @@ class PermissionStorage(object):
         :param label: str -- The permission label to get.
         :raises: ValueError
         """
-        permission = self.get_all_permissions().get(label)
+        permission = self.get_all_permissions().get(label, None)
 
-        if not permission:
-            raise ValueError(
+        if permission is None:
+            raise PermissionNotFound(
                 'There is no permission registered with the label {} in the '
                 '{} storage backend.'.format(
                     label, self.__class__.__name__))

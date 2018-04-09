@@ -5,6 +5,7 @@ from django.test import TestCase
 
 from django_logical_perms.backends import LogicalPermissionsBackend
 from django_logical_perms.decorators import permission
+from django_logical_perms.exceptions import PermissionNotFound
 from django_logical_perms.permissions import LogicalPermission, FunctionalLogicalPermission, BaseLogicalPermission, ProcessedLogicalPermission, has_perm
 from django_logical_perms.storages import default_storage, PermissionStorage
 
@@ -110,16 +111,18 @@ class PermissionsTestCase(TestCase):
         # There should be nothing in the storage now.
         self.assertEqual(storage.get_all_permissions(), {})
 
-        # We should only be allowed to register BaseLogicalPermission instances with the storage backend.
+        # We should only be allowed to register BaseLogicalPermission instances
+        # with the storage backend.
         with self.assertRaises(ValueError):
             storage.register(object())
 
-        # The BaseLogicalPermission instance must have a label in order for it to be registered with the storage backend.
+        # The BaseLogicalPermission instance must have a label in order for it to
+        # be registered with the storage backend.
         with self.assertRaises(ValueError):
             storage.register(BaseLogicalPermission())
 
         # There should not be a 'demo' permission in the storage now.
-        with self.assertRaises(ValueError):
+        with self.assertRaises(PermissionNotFound):
             storage.get_permission('demo')
 
         # This registration should go as planned.
