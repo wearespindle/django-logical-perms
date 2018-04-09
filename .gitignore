@@ -27,3 +27,26 @@ coverage.xml
 
 # Sphinx documentation
 docs/_build/
+
+*.sublime-project
+*.sublime-workspace
+*.swp
+*.*~
+.idea/
+.DS_Store
+
+# /
+/.ropeproject
+/.noseids
+/.pydevproject
+/.project
+/.settings
+/tags
+/.tags
+/.tags1
+/.vimrc
+/.vscode
+/nbproject
+/dist-packages
+/node_modules
+/xunit.xml
