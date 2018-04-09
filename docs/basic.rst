@@ -73,10 +73,10 @@ More advanced permissions
 
 More complex permissions can be implemented by creating class-based permissions. The ``permission`` decorator
 is actually just a convenience decorator that will turn your method into a class-based permission. Class-based
-permissions should extend the ``P`` class. Let's create a new class-based permission.
+permissions should extend the ``LogicalPermission`` class. Let's create a new class-based permission.
 ::
 
-    class CanUpdateProfile(P):
+    class CanUpdateProfile(LogicalPermission):
         def obj_is_special(self, obj):
             return isinstance(obj, SpecialObject)
 
@@ -91,7 +91,7 @@ Using the permissions is as simple as using the permission we created with a dec
     can_update_profile(user_a, user_b)
     can_update_profile(user_b, user_a)
 
-The ``P`` class has two main methods that you can override.
+The ``LogicalPermission`` class has two main methods that you can override.
 
     :has_permission:
         This method should simply return whether or not the user is authorized for the given permission. It should

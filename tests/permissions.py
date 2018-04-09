@@ -1,13 +1,13 @@
 from django_logical_perms.decorators import permission
-from django_logical_perms.permissions import P
+from django_logical_perms.permissions import LogicalPermission
 
 
-class SimplePermission(P):
+class SimplePermission(LogicalPermission):
     def has_permission(self, user, obj=None):
         return True
 
 
-class ChangingPermission(P):
+class ChangingPermission(LogicalPermission):
     results = {}
 
     def set_result(self, obj, result):

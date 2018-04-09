@@ -1,6 +1,6 @@
 from django.conf import settings
 
-from django_logical_perms.permissions import FunctionalP
+from django_logical_perms.permissions import FunctionalLogicalPermission
 from django_logical_perms.storages import default_storage
 
 from functools import partial, wraps
@@ -33,7 +33,7 @@ def permission(func=None, label=None, register=None):
     @wraps(func)
     def actual_decorator():
         # Create the actual permission object
-        instance = FunctionalP(check_func=func, label=label)
+        instance = FunctionalLogicalPermission(check_func=func, label=label)
 
         # Register with the default storage if specified
         if register is True:

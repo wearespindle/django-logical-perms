@@ -104,7 +104,7 @@ This also works fine with class-based permissions.
 
 ::
 
-    class CustomPermission(P):
+    class CustomPermission(LogicalPermission):
         def has_permission(user, obj=None):
             return True
 

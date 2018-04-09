@@ -1,4 +1,4 @@
-from django_logical_perms.permissions import BaseP
+from django_logical_perms.permissions import BaseLogicalPermission
 
 
 class PermissionStorage(object):
@@ -21,14 +21,14 @@ class PermissionStorage(object):
             instance label. If you do not explicitly specify a label, the
             permission's label will be used (``permission.label``).
 
-        :param permission: BaseP -- The permission to register.
+        :param permission: BaseLogicalPermission -- The permission to register.
         :param label: str, optional -- Custom label for the permission.
         :raises: ValueError
         """
-        if not isinstance(permission, BaseP):
+        if not isinstance(permission, BaseLogicalPermission):
             raise ValueError(
                 'Registering permissions with the PermissionStorage backend is only '
-                'allowed for instances of BaseP.')
+                'allowed for instances of BaseLogicalPermission.')
 
         if label is None:
             label = permission.label

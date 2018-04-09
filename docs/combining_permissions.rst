@@ -129,16 +129,16 @@ they yield unexpected results. You can simply request the representation of the 
 combined. This also works for non-combined permissions.
 ::
 
-    repr(perm_a)  # P(myapp.perm_a)
-    repr(perm_b)  # P(myapp.perm_b)
+    repr(perm_a)  # LogicalPermission(myapp.perm_a)
+    repr(perm_b)  # LogicalPermission(myapp.perm_b)
 
-    repr(~perm_a)  # Not<P(myapp.perm_a)>
-    repr(~perm_b)  # Not<P(myapp.perm_b)>
+    repr(~perm_a)  # Not<LogicalPermission(myapp.perm_a)>
+    repr(~perm_b)  # Not<LogicalPermission(myapp.perm_b)>
 
-    repr(perm_a & perm_b)  # And<P(myapp.perm_a), P(myapp.perm_b)>
-    repr(perm_a | perm_b)  # Or<P(myapp.perm_a), P(myapp.perm_b)>
+    repr(perm_a & perm_b)  # And<LogicalPermission(myapp.perm_a), LogicalPermission(myapp.perm_b)>
+    repr(perm_a | perm_b)  # Or<LogicalPermission(myapp.perm_a), LogicalPermission(myapp.perm_b)>
 
-    repr((perm_a & perm_b) ^ perm_a)  # Xor<And<P(myapp.perm_a), P(myapp.perm_b)>, P(myapp.perm_a)>
+    repr((perm_a & perm_b) ^ perm_a)  # Xor<And<LogicalPermission(myapp.perm_a), LogicalPermission(myapp.perm_b)>, LogicalPermission(myapp.perm_a)>
 
     # .. and so on
 

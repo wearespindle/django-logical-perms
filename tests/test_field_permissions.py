@@ -4,12 +4,12 @@ from unittest import TestCase
 from django.contrib.auth.models import AnonymousUser, User
 
 from django_logical_perms.configs import FieldPermissionConfig, FieldPermissionConfigSet
-from django_logical_perms.permissions import FunctionalP
+from django_logical_perms.permissions import FunctionalLogicalPermission
 
 
 class FieldPermissionsTestCase(TestCase):
     def _get_valid_config_set_cls(self):
-        only_anon_perm = FunctionalP(lambda user, obj=None: isinstance(user, AnonymousUser))
+        only_anon_perm = FunctionalLogicalPermission(lambda user, obj=None: isinstance(user, AnonymousUser))
 
         class ConfigSet(FieldPermissionConfigSet):
             field_config = [
@@ -32,8 +32,8 @@ class FieldPermissionsTestCase(TestCase):
     def test_field_config_dynamic(self):
         user = AnonymousUser()
 
-        perm_yes = FunctionalP(lambda user_, obj=None: True)
-        perm_no = FunctionalP(lambda user_, obj=None: False)
+        perm_yes = FunctionalLogicalPermission(lambda user_, obj=None: True)
+        perm_no = FunctionalLogicalPermission(lambda user_, obj=None: False)
         config = FieldPermissionConfig(fields=['field_a'], can_view=perm_yes, can_change=perm_no)
 
         self.assertTrue(config.can_view(user))
@@ -56,7 +56,7 @@ class FieldPermissionsTestCase(TestCase):
         with self.assertRaises(ValueError):
             FieldPermissionConfig(fields=[])
 
-        # can_view and can_change must be BaseP instance or bool
+        # can_view and can_change must be BaseLogicalPermission instance or bool
         with self.assertRaises(ValueError):
             FieldPermissionConfig(fields=['blep'], can_view='this is invalid')
 
@@ -64,7 +64,7 @@ class FieldPermissionsTestCase(TestCase):
             FieldPermissionConfig(fields=['blep'], can_change='this is invalid')
 
         # These are all valid
-        perm = FunctionalP(lambda user_, obj=None: True)
+        perm = FunctionalLogicalPermission(lambda user_, obj=None: True)
 
         FieldPermissionConfig(fields=('blep',))
         FieldPermissionConfig(fields=['blep'])

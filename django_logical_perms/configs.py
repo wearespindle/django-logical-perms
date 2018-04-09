@@ -1,4 +1,4 @@
-from django_logical_perms.permissions import BaseP
+from django_logical_perms.permissions import BaseLogicalPermission
 
 
 class FieldPermissionConfig(object):
@@ -17,8 +17,8 @@ class FieldPermissionConfig(object):
             take priority over the FieldPermissionConfig instance.
 
         :param fields: tuple, list -- Fields these permissions apply to.
-        :param can_view: bool, BaseP -- Either a static boolean or a BaseP.
-        :param can_change: bool, BaseP -- Either a static boolean or a BaseP.
+        :param can_view: bool, BaseLogicalPermission -- Either a static boolean or a BaseLogicalPermission.
+        :param can_change: bool, BaseLogicalPermission -- Either a static boolean or a BaseLogicalPermission.
         """
         if not isinstance(fields, tuple) and not isinstance(fields, list):
             raise ValueError('`fields` must be a tuple or list.')
@@ -26,11 +26,11 @@ class FieldPermissionConfig(object):
         if len(fields) == 0:
             raise ValueError('`fields` must specify at least one field.')
 
-        if can_view is not None and not isinstance(can_view, (BaseP, bool)):
-            raise ValueError('`can_view` must be an instance of BaseP or a bool.')
+        if can_view is not None and not isinstance(can_view, (BaseLogicalPermission, bool)):
+            raise ValueError('`can_view` must be an instance of BaseLogicalPermission or a bool.')
 
-        if can_change is not None and not isinstance(can_change, (BaseP, bool)):
-            raise ValueError('`can_change` must be an instance of BaseP or a bool.')
+        if can_change is not None and not isinstance(can_change, (BaseLogicalPermission, bool)):
+            raise ValueError('`can_change` must be an instance of BaseLogicalPermission or a bool.')
 
         self.fields = fields
 
@@ -40,11 +40,11 @@ class FieldPermissionConfig(object):
     def _check_perm(self, perm, user, obj):
         """Check permission for the given user and object.
 
-        :param perm: bool, BaseP -- The permission to check against.
+        :param perm: bool, BaseLogicalPermission -- The permission to check against.
         :param obj: object -- The object to pass into the permission evaluator.
         :param user: User -- A User instance to check the permission against.
         """
-        if isinstance(perm, BaseP):
+        if isinstance(perm, BaseLogicalPermission):
             return perm(user, obj)
 
         return perm

@@ -5,7 +5,7 @@ from django.test import TestCase
 
 from django_logical_perms.backends import LogicalPermissionsBackend
 from django_logical_perms.decorators import permission
-from django_logical_perms.permissions import P, FunctionalP, BaseP, ProcessedP, has_perm
+from django_logical_perms.permissions import LogicalPermission, FunctionalLogicalPermission, BaseLogicalPermission, ProcessedLogicalPermission, has_perm
 from django_logical_perms.storages import default_storage, PermissionStorage
 
 from tests.permissions import SimplePermission, ChangingPermission, StaticLabelPermission, simple_decorated_permission, \
@@ -14,7 +14,7 @@ from tests.permissions import SimplePermission, ChangingPermission, StaticLabelP
 
 class PermissionsTestCase(TestCase):
     def test_not_implemented_permission(self):
-        p_instance = P()
+        p_instance = LogicalPermission()
         user = AnonymousUser()
 
         evaluators = (
@@ -23,7 +23,7 @@ class PermissionsTestCase(TestCase):
             p_instance,
         )
 
-        # P must be subclassed. If not, it should raise NotImplementedError.
+        # LogicalPermission must be subclassed. If not, it should raise NotImplementedError.
         for fn in evaluators:
             with self.assertRaises(NotImplementedError):
                 fn(user)
@@ -38,7 +38,7 @@ class PermissionsTestCase(TestCase):
             simple_perm,
         )
 
-        # Simply calling a P instance should evaluate the permission
+        # Simply calling a LogicalPermission instance should evaluate the permission
         for fn in evaluators:
             self.assertTrue(fn(user))
             self.assertTrue(fn(user, obj=simple_perm))
@@ -83,23 +83,23 @@ class PermissionsTestCase(TestCase):
         self.assertEqual(static_label_perm.label, 'tests.static_permission')
 
         # The labels should be in the representations also
-        self.assertEqual(repr(simple_perm), 'P(tests.SimplePermission)')
-        self.assertEqual(repr(random_perm), 'P(tests.ChangingPermission)')
-        self.assertEqual(repr(static_label_perm), 'P(tests.static_permission)')
+        self.assertEqual(repr(simple_perm), 'LogicalPermission(tests.SimplePermission)')
+        self.assertEqual(repr(random_perm), 'LogicalPermission(tests.ChangingPermission)')
+        self.assertEqual(repr(static_label_perm), 'LogicalPermission(tests.static_permission)')
 
     def test_method_based_permission(self):
-        # We should be able to create permissions using lambdas through FunctionalP.
+        # We should be able to create permissions using lambdas through FunctionalLogicalPermission.
         user = AnonymousUser()
-        lambda_perm = FunctionalP(lambda user_, obj=None: True)
+        lambda_perm = FunctionalLogicalPermission(lambda user_, obj=None: True)
 
         self.assertTrue(lambda_perm(user))
         self.assertEqual(lambda_perm.label, 'tests.<lambda>')
 
-        # We should also be able to create permissions with named methods through FunctionalP.
+        # We should also be able to create permissions with named methods through FunctionalLogicalPermission.
         def can_have_tests_passed(user, obj=None):
             return True
 
-        named_perm = FunctionalP(can_have_tests_passed)
+        named_perm = FunctionalLogicalPermission(can_have_tests_passed)
 
         self.assertTrue(named_perm(user))
         self.assertEqual(named_perm.label, 'tests.can_have_tests_passed')
@@ -110,20 +110,20 @@ class PermissionsTestCase(TestCase):
         # There should be nothing in the storage now.
         self.assertEqual(storage.get_all_permissions(), {})
 
-        # We should only be allowed to register BaseP instances with the storage backend.
+        # We should only be allowed to register BaseLogicalPermission instances with the storage backend.
         with self.assertRaises(ValueError):
             storage.register(object())
 
-        # The BaseP instance must have a label in order for it to be registered with the storage backend.
+        # The BaseLogicalPermission instance must have a label in order for it to be registered with the storage backend.
         with self.assertRaises(ValueError):
-            storage.register(BaseP())
+            storage.register(BaseLogicalPermission())
 
         # There should not be a 'demo' permission in the storage now.
         with self.assertRaises(ValueError):
             storage.get_permission('demo')
 
         # This registration should go as planned.
-        perm = FunctionalP(lambda user, obj=None: True, label='demo')
+        perm = FunctionalLogicalPermission(lambda user, obj=None: True, label='demo')
         storage.register(perm)
 
         self.assertEqual(storage.get_all_permissions(), {'demo': perm})
@@ -146,26 +146,26 @@ class PermissionsTestCase(TestCase):
     def test_decorated_permission(self):
         user = AnonymousUser()
 
-        # The permission decorator simply turns a function into a FunctionalP instance.
-        self.assertIsInstance(simple_decorated_permission, FunctionalP)
+        # The permission decorator simply turns a function into a FunctionalLogicalPermission instance.
+        self.assertIsInstance(simple_decorated_permission, FunctionalLogicalPermission)
         self.assertTrue(simple_decorated_permission(user))
 
         # The label should also be set
         self.assertEqual(simple_decorated_permission.label, 'tests.simple_decorated_permission')
-        self.assertEqual(repr(simple_decorated_permission), 'P(tests.simple_decorated_permission)')
+        self.assertEqual(repr(simple_decorated_permission), 'LogicalPermission(tests.simple_decorated_permission)')
 
         # Permissions can also pass in keyword arguments to the decorator.
-        self.assertIsInstance(simple_labeled_permission, FunctionalP)
+        self.assertIsInstance(simple_labeled_permission, FunctionalLogicalPermission)
         self.assertTrue(simple_labeled_permission(user))
 
         # Check for the custom label
         self.assertEqual(simple_labeled_permission.label, 'tests.simple_labeled_permission_custom')
-        self.assertEqual(repr(simple_labeled_permission), 'P(tests.simple_labeled_permission_custom)')
+        self.assertEqual(repr(simple_labeled_permission), 'LogicalPermission(tests.simple_labeled_permission_custom)')
 
         # We can also register the permission directly with the default storage
         # by way of the decorator.
         self.assertEqual(registered_permission.label, 'tests.registered_permission')
-        self.assertEqual(repr(registered_permission), 'P(tests.registered_permission)')
+        self.assertEqual(repr(registered_permission), 'LogicalPermission(tests.registered_permission)')
         self.assertEqual(default_storage.get_permission('tests.registered_permission'), registered_permission)
         self.assertTrue(registered_permission(user))
         self.assertTrue(default_storage.get_permission('tests.registered_permission')(user))
@@ -178,7 +178,7 @@ class PermissionsTestCase(TestCase):
         user = AnonymousUser()
 
         # Should work with class-based permissions
-        class ClassPermission(P):
+        class ClassPermission(LogicalPermission):
             def has_permission(self, user, obj=None):
                 return True
 
@@ -221,17 +221,17 @@ class PermissionsTestCase(TestCase):
         # Invert
         self.assertFalse((~perm_yes)(user))
         self.assertIsNone((~perm_yes).label)
-        self.assertEqual(repr(~perm_no), 'Not<P(tests.perm_no)>')
+        self.assertEqual(repr(~perm_no), 'Not<LogicalPermission(tests.perm_no)>')
 
         # Or
         self.assertTrue((perm_yes | perm_no)(user))
         self.assertIsNone((perm_yes | perm_no).label)
-        self.assertEqual(repr(perm_yes | perm_no), 'Or<P(tests.perm_yes), P(tests.perm_no)>')
+        self.assertEqual(repr(perm_yes | perm_no), 'Or<LogicalPermission(tests.perm_yes), LogicalPermission(tests.perm_no)>')
 
         # And
         self.assertFalse((perm_yes & perm_no)(user))
         self.assertIsNone((perm_yes & perm_no).label)
-        self.assertEqual(repr(perm_yes & perm_no), 'And<P(tests.perm_yes), P(tests.perm_no)>')
+        self.assertEqual(repr(perm_yes & perm_no), 'And<LogicalPermission(tests.perm_yes), LogicalPermission(tests.perm_no)>')
 
         # Xor
         self.assertTrue((perm_yes ^ perm_no)(user))
@@ -239,7 +239,7 @@ class PermissionsTestCase(TestCase):
         self.assertTrue((perm_no ^ perm_yes)(user))
 
         self.assertIsNone((perm_yes ^ perm_no).label)
-        self.assertEqual(repr(perm_yes ^ perm_no), 'Xor<P(tests.perm_yes), P(tests.perm_no)>')
+        self.assertEqual(repr(perm_yes ^ perm_no), 'Xor<LogicalPermission(tests.perm_yes), LogicalPermission(tests.perm_no)>')
 
         # Individual permissions get cached. If we change their output, the chained permissions
         # should still evaluate to the same result through cache.
