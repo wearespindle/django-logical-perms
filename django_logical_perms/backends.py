@@ -1,3 +1,5 @@
+from django.core.exceptions import PermissionDenied
+
 from django_logical_perms.storages import default_storage
 
 
@@ -25,7 +27,11 @@ class LogicalPermissionsBackend(object):
         try:
             # Fetch the permission from the default storage
             permission = default_storage.get_permission(perm)
-            return permission(user_obj, obj)
+
+            if not permission(user_obj, obj):
+                raise PermissionDenied()
+
+            return True
 
         except ValueError:
             return False
