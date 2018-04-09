@@ -31,8 +31,18 @@ class FieldPermissionsSerializer(serializers.ModelSerializer):
 
         super(FieldPermissionsSerializer, self).__init__(*args, **kwargs)
 
-    def to_representation(self, instance):
+    def _get_request(self):
         request = self.context.get('request', None)
+
+        if request is None:
+            raise ValueError(
+                '`request` must be passed into the serializer context '
+                'in order to use FieldPermissionsSerializer.')
+
+        return request
+
+    def to_representation(self, instance):
+        request = self._get_request()
         fields = self._readable_fields
         ret = OrderedDict()
 
@@ -66,7 +76,7 @@ class FieldPermissionsSerializer(serializers.ModelSerializer):
                 'Cannot call `.is_valid()` as no `data=` keyword argument was '
                 'passed when instantiating the serializer instance.')
 
-        request = self.context.get('request', None)
+        request = self._get_request()
         disallowed_fields = []
 
         # Determine fields that cannot be changed
