@@ -4,7 +4,7 @@ from rest_framework import serializers
 from rest_framework.fields import SkipField
 from rest_framework.relations import PKOnlyObject
 
-from django_logical_perms.configs import FieldPermissionConfigSet
+from ..configs import FieldPermissionConfigSet
 
 
 class FieldPermissionsSerializer(serializers.ModelSerializer):

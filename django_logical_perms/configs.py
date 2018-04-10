@@ -1,4 +1,4 @@
-from django_logical_perms.permissions import BaseLogicalPermission
+from .permissions import BaseLogicalPermission
 
 
 class FieldPermissionConfig(object):

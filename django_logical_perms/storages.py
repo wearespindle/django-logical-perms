@@ -1,5 +1,5 @@
-from django_logical_perms.exceptions import PermissionNotFound
-from django_logical_perms.permissions import BaseLogicalPermission
+from .exceptions import PermissionNotFound
+from .permissions import BaseLogicalPermission
 
 
 class PermissionStorage(object):

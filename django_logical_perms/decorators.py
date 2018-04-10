@@ -1,7 +1,7 @@
 from django.conf import settings
 
-from django_logical_perms.permissions import FunctionalLogicalPermission
-from django_logical_perms.storages import default_storage
+from .permissions import FunctionalLogicalPermission
+from .storages import default_storage
 
 from functools import partial, wraps
 
