@@ -241,17 +241,20 @@ class PermissionsTestCase(TestCase):
         # Invert.
         self.assertFalse((~perm_yes)(user))
         self.assertIsNone((~perm_yes).label)
-        self.assertEqual(repr(~perm_no), 'Not<LogicalPermission(tests.perm_no)>')
+        self.assertEqual(repr(~perm_no),
+                         'Not<LogicalPermission(tests.perm_no)>')
 
         # Or.
         self.assertTrue((perm_yes | perm_no)(user))
         self.assertIsNone((perm_yes | perm_no).label)
-        self.assertEqual(repr(perm_yes | perm_no), 'Or<LogicalPermission(tests.perm_yes), LogicalPermission(tests.perm_no)>')
+        self.assertEqual(repr(perm_yes | perm_no),
+                         'Or<LogicalPermission(tests.perm_yes), LogicalPermission(tests.perm_no)>')
 
         # And.
         self.assertFalse((perm_yes & perm_no)(user))
         self.assertIsNone((perm_yes & perm_no).label)
-        self.assertEqual(repr(perm_yes & perm_no), 'And<LogicalPermission(tests.perm_yes), LogicalPermission(tests.perm_no)>')
+        self.assertEqual(repr(perm_yes & perm_no),
+                         'And<LogicalPermission(tests.perm_yes), LogicalPermission(tests.perm_no)>')
 
         # Xor.
         self.assertTrue((perm_yes ^ perm_no)(user))
@@ -259,7 +262,8 @@ class PermissionsTestCase(TestCase):
         self.assertTrue((perm_no ^ perm_yes)(user))
 
         self.assertIsNone((perm_yes ^ perm_no).label)
-        self.assertEqual(repr(perm_yes ^ perm_no), 'Xor<LogicalPermission(tests.perm_yes), LogicalPermission(tests.perm_no)>')
+        self.assertEqual(repr(perm_yes ^ perm_no),
+                         'Xor<LogicalPermission(tests.perm_yes), LogicalPermission(tests.perm_no)>')
 
         # Individual permissions get cached. If we change their output,
         # the chained permissions should still evaluate to the same result
