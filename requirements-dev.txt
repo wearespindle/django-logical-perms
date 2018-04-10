@@ -6,3 +6,4 @@ django-tastypie==0.14.0
 nose==1.3.7
 tox==2.9.1
 sphinxcontrib-napoleon==0.6.1
+git+https://github.com/wearespindle/flake8-import-order-spindle@v0.1#egg=flake8-import-order-spindle
