@@ -1,8 +1,7 @@
-import uuid
 from unittest import TestCase
+import uuid
 
 from django.contrib.auth.models import AnonymousUser, User
-
 from django_logical_perms.configs import FieldPermissionConfig, FieldPermissionConfigSet
 from django_logical_perms.permissions import FunctionalLogicalPermission
 

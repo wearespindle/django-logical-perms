@@ -1,5 +1,4 @@
 from django.test import TestCase
-
 from django_logical_perms.loaders import load_all_permissions_modules
 
 

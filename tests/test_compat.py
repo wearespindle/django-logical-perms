@@ -2,13 +2,13 @@ import json
 from unittest import skipIf
 
 from django import VERSION as DJANGO_VERSION
-from django.contrib.auth.models import User, AnonymousUser
+from django.contrib.auth.models import AnonymousUser, User
 from django.test import TestCase
 from django.urls import reverse
-
 from django_logical_perms.decorators import permission
 from django_logical_perms.rest_framework.serializers import FieldPermissionsSerializer
 from django_logical_perms.tastypie.authorization import DjangoObjectAuthorization
+
 from .api.rest_framework.serializers import UserSerializer
 
 

@@ -1,4 +1,4 @@
-from django.conf.urls import url, include
+from django.conf.urls import include, url
 
 urlpatterns = [
     url('drf/', include('tests.api.rest_framework.urls')),

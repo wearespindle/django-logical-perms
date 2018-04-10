@@ -1,4 +1,4 @@
-from django_logical_perms.configs import FieldPermissionConfigSet, FieldPermissionConfig
+from django_logical_perms.configs import FieldPermissionConfig, FieldPermissionConfigSet
 from django_logical_perms.decorators import permission
 
 

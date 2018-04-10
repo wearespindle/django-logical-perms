@@ -1,16 +1,26 @@
 import uuid
 
-from django.contrib.auth.models import AnonymousUser, User, Permission
+from django.contrib.auth.models import AnonymousUser, Permission, User
 from django.test import TestCase
-
 from django_logical_perms.backends import LogicalPermissionsBackend
 from django_logical_perms.decorators import permission
 from django_logical_perms.exceptions import PermissionNotFound
-from django_logical_perms.permissions import LogicalPermission, FunctionalLogicalPermission, BaseLogicalPermission, has_perm
+from django_logical_perms.permissions import (
+    BaseLogicalPermission,
+    FunctionalLogicalPermission,
+    has_perm,
+    LogicalPermission,
+)
 from django_logical_perms.storages import default_storage, PermissionStorage
 
-from .permissions import SimplePermission, ChangingPermission, StaticLabelPermission, simple_decorated_permission, \
-    simple_labeled_permission, registered_permission
+from .permissions import (
+    ChangingPermission,
+    registered_permission,
+    simple_decorated_permission,
+    simple_labeled_permission,
+    SimplePermission,
+    StaticLabelPermission,
+)
 
 
 class PermissionsTestCase(TestCase):

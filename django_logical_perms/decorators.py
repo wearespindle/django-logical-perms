@@ -1,9 +1,9 @@
+from functools import partial, wraps
+
 from django.conf import settings
 
 from .permissions import FunctionalLogicalPermission
 from .storages import default_storage
-
-from functools import partial, wraps
 
 
 def permission(func=None, label=None, register=None):

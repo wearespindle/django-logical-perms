@@ -1,10 +1,9 @@
 from django.contrib.auth.models import User
-
+from django_logical_perms.tastypie.mixins import FieldPermissionsMixin
 from tastypie.authentication import SessionAuthentication
 from tastypie.authorization import Authorization
 from tastypie.resources import ModelResource
 
-from django_logical_perms.tastypie.mixins import FieldPermissionsMixin
 from ..permissions import UserPermissionConfigSet
 
 
