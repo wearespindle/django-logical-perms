@@ -5,7 +5,7 @@ from tastypie.authorization import Authorization
 from tastypie.resources import ModelResource
 
 from django_logical_perms.tastypie.mixins import FieldPermissionsMixin
-from tests.api.permissions import UserPermissionConfigSet
+from ..permissions import UserPermissionConfigSet
 
 
 class UserAPI(FieldPermissionsMixin, ModelResource):

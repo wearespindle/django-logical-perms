@@ -1,6 +1,6 @@
 from tastypie.api import Api
 
-from tests.api.tastypie.views import UserAPI
+from .views import UserAPI
 
 api = Api(api_name='user')
 api.register(UserAPI())

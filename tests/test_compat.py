@@ -9,7 +9,7 @@ from django.urls import reverse
 from django_logical_perms.decorators import permission
 from django_logical_perms.rest_framework.serializers import FieldPermissionsSerializer
 from django_logical_perms.tastypie.authorization import DjangoObjectAuthorization
-from tests.api.rest_framework.serializers import UserSerializer
+from .api.rest_framework.serializers import UserSerializer
 
 
 def create_random_users():

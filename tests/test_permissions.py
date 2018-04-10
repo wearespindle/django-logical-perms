@@ -9,7 +9,7 @@ from django_logical_perms.exceptions import PermissionNotFound
 from django_logical_perms.permissions import LogicalPermission, FunctionalLogicalPermission, BaseLogicalPermission, has_perm
 from django_logical_perms.storages import default_storage, PermissionStorage
 
-from tests.permissions import SimplePermission, ChangingPermission, StaticLabelPermission, simple_decorated_permission, \
+from .permissions import SimplePermission, ChangingPermission, StaticLabelPermission, simple_decorated_permission, \
     simple_labeled_permission, registered_permission
 
 
