@@ -15,16 +15,16 @@ class FieldPermissionConfig(object):
         default to False.
 
         Note:
-            If you use ``FieldPermissionConfigSet`` and specified a static
+            If you use :class:`FieldPermissionConfigSet` and specified a static
             list of allowed fields (view or change), the static list will
-            take priority over the FieldPermissionConfig instance.
+            take priority over the :class:`FieldPermissionConfig` instance.
 
         Args:
             fields (tuple, list): Fields these permissions apply to.
             can_view (bool, BaseLogicalPermission): Either a static boolean or
-                a BaseLogicalPermission instance.
+                a :class:`BaseLogicalPermission` instance.
             can_change (bool, BaseLogicalPermission): Either a static boolean or
-                a BaseLogicalPermission instance.
+                a :class:`BaseLogicalPermission` instance.
         """
         if not isinstance(fields, tuple) and not isinstance(fields, list):
             raise ValueError('`fields` must be a tuple or list.')
@@ -89,7 +89,7 @@ class FieldPermissionConfig(object):
 
 class FieldPermissionConfigSet(object):
     """
-    Define permissions using a set of ``FieldPermissionConfig`` instances.
+    Define permissions using a set of :class:`FieldPermissionConfig` instances.
 
     Note:
         Statically allowed fields get priority over dynamically configured
@@ -124,7 +124,7 @@ class FieldPermissionConfigSet(object):
             action (str): Action string to validate.
 
         Raises:
-            ValueError
+            ValueError: If the given action was not found.
         """
         if action not in self.ACTIONS:
             raise ValueError('Only change and view are supported actions.')

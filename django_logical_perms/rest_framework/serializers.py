@@ -17,7 +17,7 @@ class FieldPermissionsSerializer(serializers.ModelSerializer):
 
     Note:
         You must specify ``field_permissions`` in the Meta class.
-        You can use ``FieldPermissionsConfigSet`` class for this.
+        You can use :class:`FieldPermissionsConfigSet` for this.
     """
     def __init__(self, *args, **kwargs):
         if not hasattr(self.Meta, 'field_permissions'):

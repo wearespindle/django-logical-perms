@@ -13,13 +13,13 @@ def permission(func=None, label=None, register=None):
     Args:
         func (callable): The permission evaluator.
         label (str): Optional label for the permission. If it's not set, a
-                     label will automatically be generated for the permission.
+            label will automatically be generated for the permission.
         register (bool): Optional, whether to automatically register the
-                         permission with the authentication backend. If it's
-                         not set, the default settings will be used.
+            permission with the authentication backend. If it's not set, the
+            default settings will be used.
 
     Raises:
-        ValueError if ``func`` is not a callable
+        ValueError: If ``func`` is not a callable
     """
     if func is None:
         return partial(permission, label=label, register=register)

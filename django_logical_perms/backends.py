@@ -25,15 +25,16 @@ class LogicalPermissionsBackend(object):
 
         Args:
             user_obj (User): The Django User to evaluate the permission on.
-            perm (str): The label of the permission. Should be registered in
-                        default_storage.
+            perm (str): The label of the permission. Should be registered
+                in default_storage.
             obj: Optional object to do object-level permission checks.
 
         Returns:
             bool: True if the user was granted the permission.
 
         Raises:
-            PermissionDenied
+            PermissionDenied: Short-circuits the permission evaluation if
+                the permission was explicitly denied.
         """
         try:
             # Fetch the permission from the default storage.

@@ -26,7 +26,7 @@ class BaseLogicalPermission(object):
 
         Raises:
             NotImplementedError: This method must be implemented in classes
-            that extend this base class.
+                that extend this base class.
         """
         raise NotImplementedError()
 

@@ -28,7 +28,7 @@ def load_permissions_module(app_config):
     Loads the permissions module for the given app.
 
     Args:
-        app_config (AppConfig): The app's AppConfig instance.
+        app_config (AppConfig): The app's :class:`AppConfig` instance.
 
     Returns:
         bool: True if the permissions module could be imported successfully.

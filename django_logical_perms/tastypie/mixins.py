@@ -7,7 +7,7 @@ class FieldPermissionsMixin(object):
 
     Note:
         You must specify ``field_permissions`` in the Meta class.
-        You can use ``FieldPermissionsConfigSet`` class for this.
+        You can use :class:`FieldPermissionsConfigSet` for this.
     """
     def update_bundle_fields(self, bundle, action):
         allowed_fields = self.Meta.field_permissions.get_permitted_field_names(

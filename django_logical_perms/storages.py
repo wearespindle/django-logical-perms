@@ -32,8 +32,8 @@ class PermissionStorage(object):
             label (str): An optional custom label for the permission.
 
         Raises:
-            ValueError: If the permission is not an instance of the
-            BaseLogicalPermission class.
+            ValueError: If the permission is not an instance of
+                :class:`BaseLogicalPermission`.
         """
         if not isinstance(permission, BaseLogicalPermission):
             raise ValueError(
@@ -59,7 +59,8 @@ class PermissionStorage(object):
         Returns the permission from the storage.
 
         This function will always return the permission instance from the
-        storage. If the permission is not found it will raise a ValueError.
+        storage. If the permission is not found it will raise a
+        :class:`PermissionNotFound` exception.
 
         Args:
             label (str): The permission's label.
