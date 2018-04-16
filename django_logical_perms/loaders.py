@@ -12,6 +12,10 @@ def load_all_permissions_modules(yield_loads=False):
     get registered with the storage backend. This will automatically enable
     evaluation through Django's has_perms function (if the custom auth
     backend is loaded).
+
+    Yields:
+        (AppConfig, bool): A tuple representing the app's AppConfig
+        module and whether its permissions module was successfully loaded.
     """
     from django_logical_perms.apps import DjangoLogicalPermsConfig
 

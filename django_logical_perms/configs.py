@@ -25,6 +25,13 @@ class FieldPermissionConfig(object):
                 a :class:`BaseLogicalPermission` instance.
             can_change (bool, BaseLogicalPermission): Either a static boolean or
                 a :class:`BaseLogicalPermission` instance.
+
+        Raises:
+            ValueError:
+                * If the `fields` argument is not a tuple or a list,
+                * If the `fields` list specifies zero fields,
+                * If the `can_view` or `can_change` arguments are not an
+                  instance of BaseLogicalPermission or a bool
         """
         if not isinstance(fields, tuple) and not isinstance(fields, list):
             raise ValueError('`fields` must be a tuple or list.')
@@ -137,6 +144,9 @@ class FieldPermissionConfigSet(object):
             action (str): Action to check permission against.
             user (User): A User instance to check the permission against.
             obj (object): An optional object to check the permission against.
+
+        Yields:
+            str: Permitted field name
         """
         # First iterate over all the statically allowed fields.
         for field_name in getattr(self, 'allow_{}'.format(action)):
