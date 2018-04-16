@@ -25,6 +25,9 @@ from .permissions import (
 
 class PermissionsTestCase(TestCase):
     def test_not_implemented_permission(self):
+        """
+        Tests whether all permission evaluators raise `NotImplementedError`.
+        """
         p_instance = LogicalPermission()
         user = AnonymousUser()
 
@@ -41,6 +44,9 @@ class PermissionsTestCase(TestCase):
                 fn(user)
 
     def test_permission(self):
+        """
+        Tests whether all permission evaluators return the correct output.
+        """
         simple_perm = SimplePermission()
         user = AnonymousUser()
 
@@ -57,6 +63,9 @@ class PermissionsTestCase(TestCase):
             self.assertTrue(fn(user, obj=simple_perm))
 
     def test_permission_cache(self):
+        """
+        Tests whether permissions get cached correctly.
+        """
         random_perm = ChangingPermission()
         user = AnonymousUser()
 
@@ -86,6 +95,9 @@ class PermissionsTestCase(TestCase):
         self.assertTrue(random_perm(user, obj='b'))
 
     def test_permission_label(self):
+        """
+        Tests whether permission labels get generated correctly.
+        """
         simple_perm = SimplePermission()
         random_perm = ChangingPermission()
         static_label_perm = StaticLabelPermission()
@@ -101,6 +113,9 @@ class PermissionsTestCase(TestCase):
         self.assertEqual(repr(static_label_perm), 'LogicalPermission(tests.static_permission)')
 
     def test_method_based_permission(self):
+        """
+        Tests a method-based permission, such as a lambda permission.
+        """
         # We should be able to create permissions using lambdas
         # through FunctionalLogicalPermission.
         user = AnonymousUser()
@@ -120,6 +135,9 @@ class PermissionsTestCase(TestCase):
         self.assertEqual(named_perm.label, 'tests.can_have_tests_passed')
 
     def test_storage(self):
+        """
+        Tests whether permissions can be stored in and retrieved from the permissions storage.
+        """
         storage = PermissionStorage()
 
         # There should be nothing in the storage now.
@@ -161,6 +179,9 @@ class PermissionsTestCase(TestCase):
             storage.register(perm, label='blep')
 
     def test_decorated_permission(self):
+        """
+        Tests the permission decorator: its output, its evaluators, its label and the ability to auto-register.
+        """
         user = AnonymousUser()
 
         # The permission decorator simply turns a function into
@@ -193,6 +214,9 @@ class PermissionsTestCase(TestCase):
             permission('blep')
 
     def test_django_integration(self):
+        """
+        Tests logical permission integration with Django's auth framework.
+        """
         user = AnonymousUser()
 
         # Should work with class-based permissions.
@@ -226,6 +250,9 @@ class PermissionsTestCase(TestCase):
         self.assertIsNone(LogicalPermissionsBackend().authenticate())
 
     def test_processed_permissions(self):
+        """
+        Tests logical expressions on permissions (AND, OR, XOR, NOT).
+        """
         user = AnonymousUser()
         yes = True
         no = False
@@ -290,6 +317,9 @@ class PermissionsTestCase(TestCase):
         self.assertTrue(perm(user))
 
     def test_builtin_permissions(self):
+        """
+        Tests the built-in permissions.
+        """
         # We will need an actual user for this. We'll use uuid
         # as username as it's random enough.
         user = User.objects.create(username=uuid.uuid4())

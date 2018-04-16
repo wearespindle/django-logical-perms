@@ -14,7 +14,7 @@ from .api.rest_framework.serializers import UserSerializer
 
 def create_random_users():
     """
-    Create some random users
+    Create some random users.
     """
     User.objects.create_user(username='user1', password='user1', email='user1@localhost', is_staff=True)
     User.objects.create_user(username='user2', password='user2', email='user2@localhost')
@@ -26,6 +26,9 @@ class RestFrameworkTestCase(TestCase):
         create_random_users()
 
     def test_serializer_validators(self):
+        """
+        Test the serializer meta validators.
+        """
         # This should fail because Meta.field_permissions is required
         # but was not defined.
         with self.assertRaises(ValueError):
@@ -54,6 +57,9 @@ class RestFrameworkTestCase(TestCase):
             UserSerializer().is_valid()
 
     def _test_always_visible_fields(self, resp):
+        """
+        Tests that all expected fields are present in the response.
+        """
         # IDs should be visible.
         self.assertTrue('id' in resp.data[0])
         self.assertTrue('id' in resp.data[1])
@@ -75,6 +81,9 @@ class RestFrameworkTestCase(TestCase):
         self.assertTrue('last_name' in resp.data[2])
 
     def test_anonymous_serializer_view(self):
+        """
+        Tests whether field-based view permissions get correctly enforced on anonymous users.
+        """
         # Request the user list API as an anonymous user,
         self.client.logout()
         resp = self.client.get(reverse('user-list'))
@@ -89,6 +98,9 @@ class RestFrameworkTestCase(TestCase):
         self.assertTrue('email' not in resp.data[2])
 
     def test_admin_serializer_view(self):
+        """
+        Tests whether field-based view permissions get correctly enforced on admin users.
+        """
         # Request the user list API as an admin user.
         self.client.login(username='user1', password='user1')
         resp = self.client.get(reverse('user-list'))
@@ -103,6 +115,9 @@ class RestFrameworkTestCase(TestCase):
         self.assertTrue('email' in resp.data[2])
 
     def test_user_serializer_view(self):
+        """
+        Tests whether field-based view permissions get correctly enforced on normal users.
+        """
         # Request the user list API as a normal user.
         self.client.login(username='user2', password='user2')
         resp = self.client.get(reverse('user-list'))
@@ -117,6 +132,9 @@ class RestFrameworkTestCase(TestCase):
         self.assertTrue('email' not in resp.data[2])
 
     def test_anonymous_serializer_change(self):
+        """
+        Tests whether field-based change permissions get correctly enforced on anonymous users.
+        """
         # Cache old user data.
         old_user = User.objects.get(pk=2)
 
@@ -138,6 +156,9 @@ class RestFrameworkTestCase(TestCase):
         self.assertEqual(user.email, old_user.email)
 
     def test_admin_serializer_change(self):
+        """
+        Tests whether field-based change permissions get correctly enforced on admin users.
+        """
         # Cache old user data.
         old_user = User.objects.get(pk=2)
 
@@ -159,6 +180,9 @@ class RestFrameworkTestCase(TestCase):
         self.assertEqual(user.email, 'changed@localhost')
 
     def test_user_serializer_change(self):
+        """
+        Tests whether field-based change permissions get correctly enforced on normal users.
+        """
         # Cache old user data.
         old_user = User.objects.get(pk=2)
 
@@ -180,6 +204,9 @@ class RestFrameworkTestCase(TestCase):
         self.assertEqual(user.email, 'changed@localhost')
 
     def test_other_user_serializer_change(self):
+        """
+        Tests whether field-based change permissions get correctly enforced on 3rd-party, normal users.
+        """
         # Cache old user data.
         old_user = User.objects.get(pk=2)
 
@@ -209,12 +236,18 @@ class TastypieTestCase(TestCase):
         create_random_users()
 
     def reverse(self, url, **kwargs):
+        """
+        Get the reverse URL for the given view and keyword arguments.
+        """
         url_kwargs = {'api_name': 'user', 'resource_name': 'user'}
         url_kwargs.update(kwargs)
 
         return reverse(url, kwargs=url_kwargs)
 
     def _process_response(self, response):
+        """
+        Attaches decoded JSON onto the response.
+        """
         # Tastypie responses don't include a ``data`` keyword so we'll have
         # to add it manually.
         try:
@@ -225,6 +258,9 @@ class TastypieTestCase(TestCase):
         return response
 
     def _test_always_visible_fields(self, resp):
+        """
+        Tests that all expected fields are present in the response.
+        """
         # IDs should be visible.
         self.assertTrue('id' in resp.data['objects'][0])
         self.assertTrue('id' in resp.data['objects'][1])
@@ -246,6 +282,9 @@ class TastypieTestCase(TestCase):
         self.assertTrue('last_name' in resp.data['objects'][2])
 
     def test_user_serializer_view(self):
+        """
+        Tests whether field-based view permissions get correctly enforced on normal users.
+        """
         # Request the user list API as a normal user.
         self.client.login(username='user2', password='user2')
         resp = self._process_response(self.client.get(self.reverse('api_dispatch_list')))
@@ -260,6 +299,9 @@ class TastypieTestCase(TestCase):
         self.assertTrue('email' not in resp.data['objects'][2])
 
     def test_admin_serializer_change(self):
+        """
+        Tests whether field-based view permissions get correctly enforced on admin users.
+        """
         # Cache old user data.
         old_user = User.objects.get(pk=2)
 
@@ -281,6 +323,9 @@ class TastypieTestCase(TestCase):
         self.assertEqual(user.email, 'changed@localhost')
 
     def test_user_serializer_change(self):
+        """
+        Tests whether field-based change permissions get correctly enforced on normal users.
+        """
         # Cache old user data.
         old_user = User.objects.get(pk=2)
 
@@ -302,6 +347,9 @@ class TastypieTestCase(TestCase):
         self.assertEqual(user.email, 'changed@localhost')
 
     def test_other_user_serializer_change(self):
+        """
+        Tests whether field-based change permissions get correctly enforced on 3rd-party, normal users.
+        """
         # Cache old user data.
         old_user = User.objects.get(pk=2)
 
@@ -323,6 +371,9 @@ class TastypieTestCase(TestCase):
         self.assertEqual(user.email, old_user.email)
 
     def test_object_authorization(self):
+        """
+        Tests whether object-level permissions get checked by Tastypie.
+        """
         auth = DjangoObjectAuthorization()
         user = AnonymousUser()
 

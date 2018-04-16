@@ -22,6 +22,9 @@ class FieldPermissionsTestCase(TestCase):
         return ConfigSet
 
     def test_field_config_static(self):
+        """
+        Tests static permissions in field permission configs.
+        """
         user = AnonymousUser()
         config = FieldPermissionConfig(fields=['field_a'], can_view=False, can_change=True)
 
@@ -29,6 +32,9 @@ class FieldPermissionsTestCase(TestCase):
         self.assertTrue(config.can_change(user))
 
     def test_field_config_dynamic(self):
+        """
+        Tests dynamic (logical) permissions in field permission configs.
+        """
         user = AnonymousUser()
 
         perm_yes = FunctionalLogicalPermission(lambda user_, obj=None: True)
@@ -39,6 +45,9 @@ class FieldPermissionsTestCase(TestCase):
         self.assertFalse(config.can_change(user))
 
     def test_field_config_default(self):
+        """
+        Tests the default permissions set by the field permission config.
+        """
         # By not specifying can_view and/or can_change, they should default
         # to False.
         user = AnonymousUser()
@@ -48,6 +57,9 @@ class FieldPermissionsTestCase(TestCase):
         self.assertFalse(config.can_change(user))
 
     def test_field_config_validation(self):
+        """
+        Tests whether the field config is validated correctly.
+        """
         # Fields must be a tuple or list.
         with self.assertRaises(ValueError):
             FieldPermissionConfig(fields='this is not a list')
@@ -73,6 +85,9 @@ class FieldPermissionsTestCase(TestCase):
         FieldPermissionConfig(fields=['blep'], can_view=perm | perm, can_change=perm & perm)
 
     def test_field_config_set_validation(self):
+        """
+        Tests if field config sets validate their input correctly.
+        """
         # An empty instantiation should fail because we need at least one field
         # in the field_config, allow_view or allow_change properties.
         with self.assertRaises(ValueError):
@@ -99,6 +114,9 @@ class FieldPermissionsTestCase(TestCase):
             config._validate_action('blep')
 
     def test_field_config_set(self):
+        """
+        Tests if field config sets yield the correct field-based permissions.
+        """
         anon_user = AnonymousUser()
         other_user = User.objects.create(username=uuid.uuid4())  # uuid for randomness
         config = self._get_valid_config_set_cls()()

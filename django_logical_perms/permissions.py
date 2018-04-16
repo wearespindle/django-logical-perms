@@ -123,7 +123,6 @@ class FunctionalLogicalPermission(BaseLogicalPermission):
     """
     A wrapper class for small function-based logical permissions.
     """
-
     def __init__(self, check_func, label=None):
         """
         A new logical permission using the passed in ``check_func``.
