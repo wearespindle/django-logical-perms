@@ -105,8 +105,8 @@ The ``LogicalPermission`` class has two main methods that you can override.
         (self, user, obj=None)``
 
 .. note::
-    Class-based permissions can't automatically register themselves. They will need to be manually registered in
-    order to be available to ``user.has_perm()``. Registering a permission is simple:
+    Class-based permissions won't automatically register themselves. It's best practice to manually register
+    an instance of the class-based permission with `default_storage.register`. An example is included below.
     ::
 
         from django_logical_perms.storages import default_storage
